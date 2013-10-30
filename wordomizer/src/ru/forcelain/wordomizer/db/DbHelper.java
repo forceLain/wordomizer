@@ -73,15 +73,40 @@ public class DbHelper extends SQLiteOpenHelper {
 	public Word getWord(int id){
 		SQLiteDatabase db = getWritableDatabase();
 		Cursor cursor = db.query(TABLE_WORDS, null, WORDS_ID+"="+id, null, null, null, null, "1");
+		cursor.moveToFirst();
+		Word word = new Word();
+		word.id = id;
+		word.word = findString(cursor, WORDS_WORD);
+		word.guessed = findBool(cursor, WORDS_GUESSED);
+		cursor.close();
+		db.close();
+		return word;
+		
+	}
+	
+	public Word getWord(String wordToFind) {
+		Word word = null;
+		SQLiteDatabase db = getWritableDatabase();
+		Cursor cursor = db.query(TABLE_WORDS, null, WORDS_WORD+"=?", new String[]{wordToFind}, null, null, null, "1");
 		if (cursor.moveToFirst()){
-			Word word = new Word();
-			word.id = id;
+			word = new Word();
+			word.id = findInt(cursor, WORDS_ID);
 			word.word = findString(cursor, WORDS_WORD);
 			word.guessed = findBool(cursor, WORDS_GUESSED);
-			return word;
 		}
-		return null;
-		
+		cursor.close();
+		db.close();
+		return word;
+	}
+	
+	public void updateWord(Word word) {
+		SQLiteDatabase db = getWritableDatabase();
+		final ContentValues values = new ContentValues();
+		values.put(WORDS_WORD, word.word);
+		values.put(WORDS_GUESSED, word.guessed);
+		values.put(WORDS_ID, word.id);
+		db.replace(TABLE_WORDS, null, values);
+		db.close();
 	}
 
 	public List<String> getWords(){
@@ -145,5 +170,9 @@ public class DbHelper extends SQLiteOpenHelper {
 	
 	private static boolean findBool(Cursor cursor, String tableName) {
 		return (cursor.getInt(cursor.getColumnIndex(tableName)) > 0);
+	}
+	
+	private static int findInt(Cursor cursor, String tableName) {
+		return cursor.getInt(cursor.getColumnIndex(tableName));
 	}
 }

@@ -2,4 +2,7 @@
 <resources>
     <string name="app_name">Wordomizer</string>
     <string name="start">Старт</string>
+    <string name="shuffle">↻</string>
+    <string name="next">⇒</string>
+    <string name="search">G</string>
 </resources>

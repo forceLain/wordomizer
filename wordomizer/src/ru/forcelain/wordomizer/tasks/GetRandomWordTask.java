@@ -9,15 +9,11 @@ import android.os.AsyncTask;
 
 public class GetRandomWordTask extends AsyncTask<Void, Void, Word> {
 	
-	public interface GetRandomWordCallback {
-		public void onWordReceived(Word word);
-	}
-	
 	private Context context;
 	private Random randrom;
-	private GetRandomWordCallback getRandomWordCallback;
+	private WordCallback getRandomWordCallback;
 
-	public GetRandomWordTask(Context context, GetRandomWordCallback getRandomWordCallback){
+	public GetRandomWordTask(Context context, WordCallback getRandomWordCallback){
 		this.context = context;
 		this.getRandomWordCallback = getRandomWordCallback;
 		randrom = new Random();		
