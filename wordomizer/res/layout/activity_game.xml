@@ -9,14 +9,11 @@
         android:layout_height="match_parent"
         layout="@layout/game_frame" />
 
-    <ListView
+    <include
         android:id="@+id/left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#111"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/background_light"
-        android:dividerHeight="0dp" />
+        layout="@layout/left_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

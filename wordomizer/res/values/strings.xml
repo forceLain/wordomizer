@@ -5,4 +5,7 @@
     <string name="shuffle">↻</string>
     <string name="next">⇒</string>
     <string name="search">G</string>
+    <string name="menu">✎ Статистика</string>
+    <string name="total_words">Слов в базе:</string>
+    <string name="guessed_words">Отгадано:</string>
 </resources>
