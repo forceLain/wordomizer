@@ -67,6 +67,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		viewedWords = (TextView) findViewById(R.id.views_words);
 		lastWord = (TextView) findViewById(R.id.last_word);
 		lastWord.setOnClickListener(this);
+		lastWord.setVisibility(View.GONE);
 		userWordHolder = (LinearLayout) findViewById(R.id.user_word_holder);
 		randomedWordHolder = (LinearLayout) findViewById(R.id.randomed_word_holder);
 		shuffle = findViewById(R.id.shuffle);
@@ -211,7 +212,8 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		public void onWordReceived(Word word) {
 			sourceWord = word;
 			if (previousWord != null){
-				lastWord.setText(getString(R.string.last_word)+" "+previousWord.word);				
+				lastWord.setText(getString(R.string.last_word)+" "+previousWord.word);		
+				lastWord.setVisibility(View.VISIBLE);
 			}
 			updateButtons();
 		}

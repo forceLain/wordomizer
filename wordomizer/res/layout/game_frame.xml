@@ -3,22 +3,30 @@
     android:id="@+id/content_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_dark" >
+    android:background="@drawable/grid" >
 
     <TextView
         android:id="@+id/menu"
-        android:padding="10dp"
+        style="@style/NormalTextBold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="@string/menu" />
+        android:background="@drawable/game_button"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:text="@string/menu"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
     
     <TextView
         android:id="@+id/last_word"
         android:layout_alignParentRight="true"
         android:padding="10dp"
+        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/NormalTextBold"
+        android:background="@drawable/game_button"
+        android:textColor="@android:color/white"
         android:textSize="20sp" />
 
     <LinearLayout

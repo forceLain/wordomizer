@@ -9,5 +9,5 @@
     <string name="total_words">Слов в базе:</string>
     <string name="guessed_words">Отгадано:</string>
     <string name="viewed_words">Просмотрено:</string>
-    <string name="last_word">Только что отгадано:</string>
+    <string name="last_word">Угадано:</string>
 </resources>
