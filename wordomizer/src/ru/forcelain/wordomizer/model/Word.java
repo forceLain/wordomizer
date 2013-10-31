@@ -7,6 +7,7 @@ import java.util.Collections;
 public class Word {
 	public int id;
 	public String word;
+	public String hint;
 	public boolean guessed;
 	public boolean viewed;
 	

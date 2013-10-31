@@ -50,6 +50,7 @@
             android:layout_height="@dimen/button_size"
             style="@style/WordomizerButton"
             android:layout_marginRight="5dp"
+            android:background="@drawable/game_button_no_disable"
             android:text="@string/shuffle" />
 
         <Button
@@ -59,6 +60,7 @@
             style="@style/WordomizerButton"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
+            android:background="@drawable/game_button_no_disable"
             android:text="@string/next" />
 
         <Button
@@ -67,6 +69,7 @@
             android:layout_height="@dimen/button_size"
             style="@style/WordomizerButton"
             android:layout_marginLeft="5dp"
+            android:background="@drawable/game_button_no_disable"
             android:text="@string/search" />
 
     </LinearLayout>

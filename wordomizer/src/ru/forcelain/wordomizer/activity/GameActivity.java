@@ -12,6 +12,7 @@ import ru.forcelain.wordomizer.tasks.GetRandomWordTask;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask.StatisticsCallBack;
 import ru.forcelain.wordomizer.tasks.WordCallback;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -75,14 +76,24 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	}
 
 	private void newWord() {
+		setControlsEnabled(false);
 		getRandomWordTask = new GetRandomWordTask(this, getRandomWordCallback);
 		getRandomWordTask.execute();
 		currentPosition = 0;		
 	}
 
+	private void setControlsEnabled(boolean enabled) {
+		shuffle.setEnabled(enabled);
+		next.setEnabled(enabled);
+		search.setEnabled(enabled);
+		userWordHolder.setEnabled(enabled);
+		randomedWordHolder.setEnabled(enabled);
+	}
+
 	private void updateButtons() {
 		clearButtons();
 		populateButtons();
+		setControlsEnabled(true);
 	}
 
 	
@@ -234,12 +245,22 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		case R.id.next:
 			newWord();
 			break;
+		case R.id.search:
+			showHint();
+			break;
 		case R.id.menu:
 			toggleDrawer();
 			break;
 		}
 	}
 	
+	private void showHint() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(sourceWord.hint);
+        builder.setPositiveButton("OK", null);
+        builder.create().show();
+	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch(keyCode) {

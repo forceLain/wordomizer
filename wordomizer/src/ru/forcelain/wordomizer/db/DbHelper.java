@@ -21,6 +21,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	private static final String TABLE_WORDS = "words";
 	private static final String WORDS_ID = "_id";
 	private static final String WORDS_WORD = "word";
+	private static final String WORDS_HINT = "hint";
 	private static final String WORDS_GUESSED = "guessed";
 	private static final String WORDS_VIEWED = "viewed";
 
@@ -38,6 +39,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		final String Q = "CREATE TABLE IF NOT EXISTS " + TABLE_WORDS + "("
 				+ WORDS_ID + " integer primary key autoincrement, "
 				+ WORDS_WORD + " TEXT UNIQUE, "
+				+ WORDS_HINT + " TEXT, "
 				+ WORDS_GUESSED + " INTEGER, "
 				+ WORDS_VIEWED + " INTEGER);";
 		db.execSQL(Q);
@@ -54,11 +56,13 @@ public class DbHelper extends SQLiteOpenHelper {
 	private void insertWords(SQLiteDatabase db) {
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					ctx.getAssets().open("words.txt"), "UTF-8"));
+					ctx.getAssets().open("defs.txt"), "UTF-8"));
 			String line = reader.readLine();
 			while (line != null) {
+				String[] pair = line.split("\\|");
 				final ContentValues values = new ContentValues();
-				values.put(WORDS_WORD, line);
+				values.put(WORDS_WORD, pair[0]);
+				values.put(WORDS_HINT, pair[1]);
 				values.put(WORDS_GUESSED, 0);
 				values.put(WORDS_VIEWED, 0);
 				db.replace(TABLE_WORDS, null, values);
@@ -155,6 +159,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		Word word = new Word();
 		word.id = findInt(cursor, WORDS_ID);
 		word.word = findString(cursor, WORDS_WORD);
+		word.hint = findString(cursor, WORDS_HINT);
 		word.guessed = findBool(cursor, WORDS_GUESSED);
 		word.viewed = findBool(cursor, WORDS_VIEWED);
 		return word;
@@ -163,6 +168,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	private ContentValues wordToValues(Word word){
 		ContentValues values = new ContentValues();
 		values.put(WORDS_WORD, word.word);
+		values.put(WORDS_HINT, word.hint);
 		values.put(WORDS_GUESSED, word.guessed);
 		values.put(WORDS_ID, word.id);
 		values.put(WORDS_VIEWED, word.viewed);
