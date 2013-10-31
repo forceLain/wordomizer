@@ -30,6 +30,9 @@ public class GetRandomWordTask extends AsyncTask<Void, Void, Word> {
 			word = dbHelper.getWord(randromId);
 		} while (word.guessed);
 		
+		word.viewed = true;
+		dbHelper.updateWord(word);
+		
 		return word;
 	}
 	

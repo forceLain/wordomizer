@@ -8,4 +8,5 @@
     <string name="menu">✎ Статистика</string>
     <string name="total_words">Слов в базе:</string>
     <string name="guessed_words">Отгадано:</string>
+    <string name="viewed_words">Просмотрено:</string>
 </resources>

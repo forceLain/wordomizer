@@ -3,11 +3,8 @@ package ru.forcelain.wordomizer.db;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import ru.forcelain.wordomizer.model.Word;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -25,6 +22,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	private static final String WORDS_ID = "_id";
 	private static final String WORDS_WORD = "word";
 	private static final String WORDS_GUESSED = "guessed";
+	private static final String WORDS_VIEWED = "viewed";
 
 	private static int cachedWordsCount;
 	
@@ -40,7 +38,8 @@ public class DbHelper extends SQLiteOpenHelper {
 		final String Q = "CREATE TABLE IF NOT EXISTS " + TABLE_WORDS + "("
 				+ WORDS_ID + " integer primary key autoincrement, "
 				+ WORDS_WORD + " TEXT UNIQUE, "
-				+ WORDS_GUESSED + " INTEGER);";
+				+ WORDS_GUESSED + " INTEGER, "
+				+ WORDS_VIEWED + " INTEGER);";
 		db.execSQL(Q);
 
 		insertWords(db);
@@ -61,6 +60,7 @@ public class DbHelper extends SQLiteOpenHelper {
 				final ContentValues values = new ContentValues();
 				values.put(WORDS_WORD, line);
 				values.put(WORDS_GUESSED, 0);
+				values.put(WORDS_VIEWED, 0);
 				db.replace(TABLE_WORDS, null, values);
 				line = reader.readLine();
 			}
@@ -74,14 +74,10 @@ public class DbHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		Cursor cursor = db.query(TABLE_WORDS, null, WORDS_ID+"="+id, null, null, null, null, "1");
 		cursor.moveToFirst();
-		Word word = new Word();
-		word.id = id;
-		word.word = findString(cursor, WORDS_WORD);
-		word.guessed = findBool(cursor, WORDS_GUESSED);
+		Word word = cursorToWord(cursor);
 		cursor.close();
 		db.close();
 		return word;
-		
 	}
 	
 	public Word getWord(String wordToFind) {
@@ -89,10 +85,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		Cursor cursor = db.query(TABLE_WORDS, null, WORDS_WORD+"=?", new String[]{wordToFind}, null, null, null, "1");
 		if (cursor.moveToFirst()){
-			word = new Word();
-			word.id = findInt(cursor, WORDS_ID);
-			word.word = findString(cursor, WORDS_WORD);
-			word.guessed = findBool(cursor, WORDS_GUESSED);
+			word = cursorToWord(cursor);
 		}
 		cursor.close();
 		db.close();
@@ -101,27 +94,9 @@ public class DbHelper extends SQLiteOpenHelper {
 	
 	public void updateWord(Word word) {
 		SQLiteDatabase db = getWritableDatabase();
-		final ContentValues values = new ContentValues();
-		values.put(WORDS_WORD, word.word);
-		values.put(WORDS_GUESSED, word.guessed);
-		values.put(WORDS_ID, word.id);
+		ContentValues values = wordToValues(word);
 		db.replace(TABLE_WORDS, null, values);
 		db.close();
-	}
-
-	public List<String> getWords(){
-		List<String> words = null;
-		SQLiteDatabase db = getWritableDatabase();
-		Cursor cursor = db.query(TABLE_WORDS, null, null, null, null, null, null);
-		if (cursor.moveToFirst()){
-			words = new ArrayList<String>();
-			do {
-				words.add(cursor.getString(cursor.getColumnIndex(WORDS_WORD)));
-			} while (cursor.moveToNext());
-		}
-		cursor.close();
-		db.close();
-		return words;
 	}
 	
 	public int getWordsCount(){
@@ -162,6 +137,36 @@ public class DbHelper extends SQLiteOpenHelper {
 		cursor.close();
 		db.close();
 		return count;
+	}
+	
+	public int getViewedWordsCount(){
+		int count = 0;
+		SQLiteDatabase db = getWritableDatabase();
+		Cursor cursor = db.rawQuery("select count(*) from "+TABLE_WORDS+" where "+WORDS_VIEWED+"= 1", null);
+		if (cursor.moveToFirst()){
+			count = cursor.getInt(0);
+		}
+		cursor.close();
+		db.close();
+		return count;
+	}
+	
+	private Word cursorToWord(Cursor cursor){
+		Word word = new Word();
+		word.id = findInt(cursor, WORDS_ID);
+		word.word = findString(cursor, WORDS_WORD);
+		word.guessed = findBool(cursor, WORDS_GUESSED);
+		word.viewed = findBool(cursor, WORDS_VIEWED);
+		return word;
+	}
+	
+	private ContentValues wordToValues(Word word){
+		ContentValues values = new ContentValues();
+		values.put(WORDS_WORD, word.word);
+		values.put(WORDS_GUESSED, word.guessed);
+		values.put(WORDS_ID, word.id);
+		values.put(WORDS_VIEWED, word.viewed);
+		return values;
 	}
 	
 	private static String findString(Cursor cursor, String tableName){

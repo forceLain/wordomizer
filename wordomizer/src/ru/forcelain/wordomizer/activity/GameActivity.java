@@ -42,6 +42,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private View menu;
 	private TextView totalWords;
 	private TextView guessedWords;
+	private TextView viewedWords;
 	private GetRandomWordTask getRandomWordTask;
 	private CheckWordTask checkWordTask;
 	private GetStatisticsTask getStatisticsTask;
@@ -60,6 +61,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		menu.setOnClickListener(this);
 		totalWords = (TextView) findViewById(R.id.total_words);
 		guessedWords = (TextView) findViewById(R.id.guessed_words);
+		viewedWords = (TextView) findViewById(R.id.views_words);
 		userWordHolder = (LinearLayout) findViewById(R.id.user_word_holder);
 		randomedWordHolder = (LinearLayout) findViewById(R.id.randomed_word_holder);
 		shuffle = findViewById(R.id.shuffle);
@@ -281,5 +283,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	public void onStatisticsReceived(Statistics statistics) {
 		totalWords.setText(getString(R.string.total_words)+" "+statistics.totalWordsCount);
 		guessedWords.setText(getString(R.string.guessed_words)+" "+statistics.guessedWordsCount);
+		viewedWords.setText(getString(R.string.viewed_words)+" "+statistics.viewedWordsCount);
 	}
 }

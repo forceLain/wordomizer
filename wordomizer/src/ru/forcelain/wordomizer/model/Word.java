@@ -8,6 +8,7 @@ public class Word {
 	public int id;
 	public String word;
 	public boolean guessed;
+	public boolean viewed;
 	
 	public String getRandomizedWord(){
 		int l = word.length();
