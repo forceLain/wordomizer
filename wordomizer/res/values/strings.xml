@@ -4,9 +4,10 @@
     <string name="start">Старт</string>
     <string name="shuffle">↻</string>
     <string name="next">⇒</string>
-    <string name="search">G</string>
+    <string name="search">\?</string>
     <string name="menu">✎ Статистика</string>
     <string name="total_words">Слов в базе:</string>
     <string name="guessed_words">Отгадано:</string>
     <string name="viewed_words">Просмотрено:</string>
+    <string name="last_word">Только что отгадано:</string>
 </resources>
