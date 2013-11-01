@@ -39,12 +39,12 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private LinearLayout randomedWordHolder;
 	private View shuffle;
 	private View next;
-	private View search;
 	private View menu;
 	private TextView totalWords;
 	private TextView guessedWords;
 	private TextView viewedWords;
 	private TextView lastWord;
+	private TextView hint;
 	private GetRandomWordTask getRandomWordTask;
 	private CheckWordTask checkWordTask;
 	private GetStatisticsTask getStatisticsTask;
@@ -68,14 +68,13 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		lastWord = (TextView) findViewById(R.id.last_word);
 		lastWord.setOnClickListener(this);
 		lastWord.setVisibility(View.GONE);
+		hint = (TextView) findViewById(R.id.hint_text);
 		userWordHolder = (LinearLayout) findViewById(R.id.user_word_holder);
 		randomedWordHolder = (LinearLayout) findViewById(R.id.randomed_word_holder);
 		shuffle = findViewById(R.id.shuffle);
 		shuffle.setOnClickListener(this);
 		next = findViewById(R.id.next);
 		next.setOnClickListener(this);
-		search = findViewById(R.id.search);
-		search.setOnClickListener(this);
 		
 		newWord();
 	}
@@ -90,7 +89,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private void setControlsEnabled(boolean enabled) {
 		shuffle.setEnabled(enabled);
 		next.setEnabled(enabled);
-		search.setEnabled(enabled);
 		userWordHolder.setEnabled(enabled);
 		randomedWordHolder.setEnabled(enabled);
 	}
@@ -211,6 +209,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		@Override
 		public void onWordReceived(Word word) {
 			sourceWord = word;
+			hint.setText(word.hint);
 			if (previousWord != null){
 				lastWord.setText(getString(R.string.last_word)+" "+previousWord.word);		
 				lastWord.setVisibility(View.VISIBLE);
@@ -258,9 +257,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		case R.id.next:
 			newWord();
 			break;
-		case R.id.search:
-			showHint(sourceWord);
-			break;
 		case R.id.last_word:
 			if (previousWord != null){
 				showHint(previousWord);				
@@ -275,6 +271,8 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private void showHint(Word word) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(word.hint);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.hint);
         builder.setPositiveButton("OK", null);
         builder.create().show();
 	}
