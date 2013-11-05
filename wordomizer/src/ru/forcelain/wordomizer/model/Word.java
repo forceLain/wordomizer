@@ -18,11 +18,17 @@ public class Word {
 			realWordArray[i] = Character.toString(word.charAt(i));			
 		}
 		ArrayList<String> mixedWordArrayList = new ArrayList<String>(Arrays.asList(realWordArray));
-		Collections.shuffle(mixedWordArrayList);
-		StringBuilder sb = new StringBuilder();
-		for (String str : mixedWordArrayList){
-			sb.append(str);			
-		}
-		return sb.toString();
+		String result;
+		do {
+			Collections.shuffle(mixedWordArrayList);
+			StringBuilder sb = new StringBuilder();
+			for (String str : mixedWordArrayList){
+				sb.append(str);			
+			}
+			result = sb.toString();
+			
+		} while (result.equals(word));
+		
+		return result;
 	}
 }
