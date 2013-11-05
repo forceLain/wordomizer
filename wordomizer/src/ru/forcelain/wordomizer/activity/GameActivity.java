@@ -56,7 +56,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
-		
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawerLayout.setDrawerListener(drawerListener);
 		leftDrawer = findViewById(R.id.left_drawer);
@@ -73,8 +72,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		shuffle.setOnClickListener(this);
 		next = findViewById(R.id.next);
 		next.setOnClickListener(this);
-		
-		newWord(true);
+		newWord(true);			
 	}
 
 	private void newWord(boolean immediate) {
