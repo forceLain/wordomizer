@@ -9,9 +9,11 @@ import ru.forcelain.wordomizer.animation.SimpleAnimationListener;
 import ru.forcelain.wordomizer.model.Statistics;
 import ru.forcelain.wordomizer.model.Word;
 import ru.forcelain.wordomizer.tasks.GetRandomWordTask;
+import ru.forcelain.wordomizer.tasks.GetRandomWordTask.WordCallback;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask.StatisticsCallBack;
-import ru.forcelain.wordomizer.tasks.WordCallback;
+import ru.forcelain.wordomizer.tasks.UpdateWordTask;
+import ru.forcelain.wordomizer.tasks.UpdateWordTask.UpdateWordCallback;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -48,6 +50,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private TextView viewedWords;
 	private TextView hint;
 	private GetRandomWordTask getRandomWordTask;
+	private UpdateWordTask updateWordTask;
 	private GetStatisticsTask getStatisticsTask;
 	private Word sourceWord;
 	private int currentPosition;
@@ -154,7 +157,9 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		String userWord = construcWord();
 		if (userWord.equals(sourceWord.word)){
 			colorUiResult(true);
-			uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);
+			sourceWord.guessed = true;
+			updateWordTask = new UpdateWordTask(this, updateWordCallback);
+			updateWordTask.execute(sourceWord);
 		} else {
 			colorUiResult(false);
 			uiHandler.sendEmptyMessageDelayed(FAIL, DELAY);
@@ -237,7 +242,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		}	
 	}
 	
-	private WordCallback getRandomWordCallback = new WordCallback() {		
+	private GetRandomWordTask.WordCallback getRandomWordCallback = new WordCallback() {		
 		@Override
 		public void onWordReceived(Word word) {
 			sourceWord = word;
@@ -245,6 +250,14 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 			clearButtons();
 			populateButtons();
 			fadeIn();
+		}
+	};
+	
+	private UpdateWordTask.UpdateWordCallback updateWordCallback = new UpdateWordCallback() {
+		
+		@Override
+		public void onWordUpdated() {
+			uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);
 		}
 	};
 	
