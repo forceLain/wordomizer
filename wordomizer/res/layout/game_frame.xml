@@ -37,22 +37,23 @@
             android:textSize="20sp" />
     </FrameLayout>
     
-    <TextView
-        android:id="@+id/hint_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="#770055FF"
-        android:gravity="center"
-        android:lines="3"
-        android:padding="5dp"
-        android:textColor="@android:color/white" />
-    
     <LinearLayout
-        android:id="@+id/buttons_container"
+        android:id="@+id/fading_layer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/hint_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="#770055FF"
+            android:gravity="center"
+            android:lines="3"
+            android:padding="5dp"
+            android:textColor="@android:color/white" />
 
         <LinearLayout
             android:id="@+id/user_word_holder"
@@ -68,6 +69,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

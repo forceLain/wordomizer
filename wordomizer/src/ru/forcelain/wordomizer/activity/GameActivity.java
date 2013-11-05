@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ru.forcelain.wordomizer.R;
+import ru.forcelain.wordomizer.animation.SimpleAnimationListener;
 import ru.forcelain.wordomizer.model.Statistics;
 import ru.forcelain.wordomizer.model.Word;
 import ru.forcelain.wordomizer.tasks.GetRandomWordTask;
@@ -21,6 +22,7 @@ import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -38,6 +40,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private View leftDrawer;
 	private LinearLayout userWordHolder;
 	private LinearLayout randomedWordHolder;
+	private View fadingLayer;
 	private View shuffle;
 	private View next;
 	private View menu;
@@ -69,6 +72,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		lastWord.setOnClickListener(this);
 		lastWord.setVisibility(View.GONE);
 		hint = (TextView) findViewById(R.id.hint_text);
+		fadingLayer = findViewById(R.id.fading_layer);
 		userWordHolder = (LinearLayout) findViewById(R.id.user_word_holder);
 		randomedWordHolder = (LinearLayout) findViewById(R.id.randomed_word_holder);
 		shuffle = findViewById(R.id.shuffle);
@@ -76,14 +80,38 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		next = findViewById(R.id.next);
 		next.setOnClickListener(this);
 		
-		newWord();
+		newWord(true);
 	}
 
-	private void newWord() {
+	private void newWord(boolean immediate) {
 		setControlsEnabled(false);
-		getRandomWordTask = new GetRandomWordTask(this, getRandomWordCallback);
+		currentPosition = 0;
+		if (immediate){
+			hide();
+		} else {
+			fadeOut();			
+		}
+	}
+	
+	private void hide(){
+		AlphaAnimation alphaUp = new AlphaAnimation(0, 0);
+        alphaUp.setFillAfter(true);
+        fadingLayer.startAnimation(alphaUp);
+		getRandomWordTask = new GetRandomWordTask(GameActivity.this, getRandomWordCallback);
 		getRandomWordTask.execute();
-		currentPosition = 0;		
+	}
+
+	private void fadeOut() {
+		Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+		fadeOut.setFillAfter(true);
+		fadeOut.setAnimationListener(new SimpleAnimationListener(){
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				getRandomWordTask = new GetRandomWordTask(GameActivity.this, getRandomWordCallback);
+				getRandomWordTask.execute();
+			}
+		});
+		fadingLayer.startAnimation(fadeOut);
 	}
 
 	private void setControlsEnabled(boolean enabled) {
@@ -92,13 +120,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		userWordHolder.setEnabled(enabled);
 		randomedWordHolder.setEnabled(enabled);
 	}
-
-	private void updateButtons() {
-		clearButtons();
-		populateButtons();
-		setControlsEnabled(true);
-	}
-
 	
 	private void populateButtons() {
 		String word = sourceWord.getRandomizedWord();
@@ -213,14 +234,28 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		@Override
 		public void onWordReceived(Word word) {
 			sourceWord = word;
-			hint.setText(word.hint);
-			if (previousWord != null){
-				lastWord.setText(getString(R.string.last_word)+" "+previousWord.word);		
-				lastWord.setVisibility(View.VISIBLE);
-			}
-			updateButtons();
+			hint.setText(sourceWord.hint);
+			clearButtons();
+			populateButtons();
+			fadeIn();
 		}
 	};
+	
+	private void fadeIn() {
+		Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+		fadeIn.setFillAfter(true);
+		fadeIn.setAnimationListener(new SimpleAnimationListener(){
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				setControlsEnabled(true);
+				if (previousWord != null){
+					lastWord.setText(getString(R.string.last_word)+" "+previousWord.word);		
+					lastWord.setVisibility(View.VISIBLE);
+				}
+			}
+		});
+		fadingLayer.startAnimation(fadeIn);
+	}
 	
 	private Handler uiHandler = new Handler(new Handler.Callback(){
 
@@ -229,7 +264,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 			switch (msg.what) {
 			case SUCCESS:
 				previousWord = sourceWord;
-				newWord();
+				newWord(false);
 				break;
 			case FAIL:
 				clearUserButtons(0);
@@ -247,7 +282,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 			shuffle();
 			break;
 		case R.id.next:
-			newWord();
+			newWord(false);
 			break;
 		case R.id.last_word:
 			if (previousWord != null){
@@ -259,7 +294,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 			break;
 		}
 	}
-	
+
 	private void showHint(Word word) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(word.hint);
@@ -289,17 +324,22 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 
 	private void shuffle() {
 		Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+		shake.setAnimationListener(new SimpleAnimationListener(){
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				List<View> buttonsList = new LinkedList<View>();
+				int childCount = randomedWordHolder.getChildCount();
+				for (int i = 0; i < childCount; i++){
+					buttonsList.add(randomedWordHolder.getChildAt(i));
+				}
+				Collections.shuffle(buttonsList);
+				randomedWordHolder.removeAllViews();
+				for (View view : buttonsList) {
+					randomedWordHolder.addView(view);
+				}
+			}
+		});
 		randomedWordHolder.startAnimation(shake);
-		List<View> buttonsList = new LinkedList<View>();
-		int childCount = randomedWordHolder.getChildCount();
-		for (int i = 0; i < childCount; i++){
-			buttonsList.add(randomedWordHolder.getChildAt(i));
-		}
-		Collections.shuffle(buttonsList);
-		randomedWordHolder.removeAllViews();
-		for (View view : buttonsList) {
-			randomedWordHolder.addView(view);
-		}
 	}
 	
 	private SimpleDrawerListener drawerListener = new SimpleDrawerListener() {
