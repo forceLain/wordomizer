@@ -153,9 +153,23 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private void checkWin() {
 		String userWord = construcWord();
 		if (userWord.equals(sourceWord.word)){
+			colorUiResult(true);
 			uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);
 		} else {
+			colorUiResult(false);
 			uiHandler.sendEmptyMessageDelayed(FAIL, DELAY);
+		}
+	}
+
+	private void colorUiResult(boolean success) {
+		int count = userWordHolder.getChildCount();
+		for (int i = 0; i < count; i++){
+			Button userButton = (Button) userWordHolder.getChildAt(i);
+			if (success){
+				userButton.setBackgroundResource(R.drawable.game_button_success);				
+			} else {
+				userButton.setBackgroundResource(R.drawable.game_button_fail);				
+			}
 		}
 	}
 
@@ -189,6 +203,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 			Button userButton = (Button) userWordHolder.getChildAt(i);
 			enableRandomedButton(userButton.getText().toString().charAt(0));
 			userButton.setText("");
+			userButton.setBackgroundResource(R.drawable.game_button);
 		}
 		currentPosition = startPos;
 	}	
