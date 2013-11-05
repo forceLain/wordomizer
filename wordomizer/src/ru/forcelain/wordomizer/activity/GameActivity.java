@@ -12,7 +12,6 @@ import ru.forcelain.wordomizer.tasks.GetRandomWordTask;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask.StatisticsCallBack;
 import ru.forcelain.wordomizer.tasks.WordCallback;
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -47,12 +46,10 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private TextView totalWords;
 	private TextView guessedWords;
 	private TextView viewedWords;
-	private TextView lastWord;
 	private TextView hint;
 	private GetRandomWordTask getRandomWordTask;
 	private GetStatisticsTask getStatisticsTask;
 	private Word sourceWord;
-	private Word previousWord;
 	private int currentPosition;
 
 	@Override
@@ -68,9 +65,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		totalWords = (TextView) findViewById(R.id.total_words);
 		guessedWords = (TextView) findViewById(R.id.guessed_words);
 		viewedWords = (TextView) findViewById(R.id.views_words);
-		lastWord = (TextView) findViewById(R.id.last_word);
-		lastWord.setOnClickListener(this);
-		lastWord.setVisibility(View.GONE);
 		hint = (TextView) findViewById(R.id.hint_text);
 		fadingLayer = findViewById(R.id.fading_layer);
 		userWordHolder = (LinearLayout) findViewById(R.id.user_word_holder);
@@ -248,10 +242,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				setControlsEnabled(true);
-				if (previousWord != null){
-					lastWord.setText(getString(R.string.last_word)+" "+previousWord.word);		
-					lastWord.setVisibility(View.VISIBLE);
-				}
 			}
 		});
 		fadingLayer.startAnimation(fadeIn);
@@ -263,7 +253,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		public boolean handleMessage(Message msg) {
 			switch (msg.what) {
 			case SUCCESS:
-				previousWord = sourceWord;
 				newWord(false);
 				break;
 			case FAIL:
@@ -284,24 +273,10 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		case R.id.next:
 			newWord(false);
 			break;
-		case R.id.last_word:
-			if (previousWord != null){
-				showHint(previousWord);				
-			}
-			break;
 		case R.id.menu:
 			toggleDrawer();
 			break;
 		}
-	}
-
-	private void showHint(Word word) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(word.hint);
-        builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.hint);
-        builder.setPositiveButton("OK", null);
-        builder.create().show();
 	}
 
 	@Override
