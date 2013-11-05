@@ -21,6 +21,8 @@ import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -286,6 +288,8 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	}
 
 	private void shuffle() {
+		Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+		randomedWordHolder.startAnimation(shake);
 		List<View> buttonsList = new LinkedList<View>();
 		int childCount = randomedWordHolder.getChildCount();
 		for (int i = 0; i < childCount; i++){
