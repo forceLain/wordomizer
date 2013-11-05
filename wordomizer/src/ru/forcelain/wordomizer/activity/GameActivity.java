@@ -7,7 +7,6 @@ import java.util.List;
 import ru.forcelain.wordomizer.R;
 import ru.forcelain.wordomizer.model.Statistics;
 import ru.forcelain.wordomizer.model.Word;
-import ru.forcelain.wordomizer.tasks.CheckWordTask;
 import ru.forcelain.wordomizer.tasks.GetRandomWordTask;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask.StatisticsCallBack;
@@ -46,7 +45,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private TextView lastWord;
 	private TextView hint;
 	private GetRandomWordTask getRandomWordTask;
-	private CheckWordTask checkWordTask;
 	private GetStatisticsTask getStatisticsTask;
 	private Word sourceWord;
 	private Word previousWord;
@@ -138,8 +136,12 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	}
 	
 	private void checkWin() {
-		checkWordTask = new CheckWordTask(this, checkWordCallback);
-		checkWordTask.execute(construcWord());
+		String userWord = construcWord();
+		if (userWord.equals(sourceWord.word)){
+			uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);
+		} else {
+			uiHandler.sendEmptyMessageDelayed(FAIL, DELAY);
+		}
 	}
 
 	private String construcWord() {
@@ -215,18 +217,6 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 				lastWord.setVisibility(View.VISIBLE);
 			}
 			updateButtons();
-		}
-	};
-	
-	private WordCallback checkWordCallback = new WordCallback() {
-		
-		@Override
-		public void onWordReceived(Word word) {
-			if (word == null){
-				uiHandler.sendEmptyMessageDelayed(FAIL, DELAY);
-			} else {
-				uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);
-			}
 		}
 	};
 	
