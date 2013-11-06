@@ -45,6 +45,8 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private View shuffle;
 	private View next;
 	private View menu;
+	private View menuProgress;
+	private View menuContent;
 	private TextView totalWords;
 	private TextView guessedWords;
 	private TextView viewedWords;
@@ -64,6 +66,8 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		leftDrawer = findViewById(R.id.left_drawer);
 		menu = findViewById(R.id.menu);
 		menu.setOnClickListener(this);
+		menuProgress = findViewById(R.id.left_drawer_progress);
+		menuContent = findViewById(R.id.left_drawer_content);
 		totalWords = (TextView) findViewById(R.id.total_words);
 		guessedWords = (TextView) findViewById(R.id.guessed_words);
 		viewedWords = (TextView) findViewById(R.id.views_words);
@@ -349,6 +353,12 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 			getStatisticsTask = new GetStatisticsTask(GameActivity.this, GameActivity.this);
 			getStatisticsTask.execute();
 		};
+		
+		@Override
+		public void onDrawerClosed(View drawerView) {
+			menuProgress.setVisibility(View.VISIBLE);
+			menuContent.setVisibility(View.GONE);
+		};
 	};
 
 	@Override
@@ -356,5 +366,7 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		totalWords.setText(getString(R.string.total_words)+" "+statistics.totalWordsCount);
 		guessedWords.setText(getString(R.string.guessed_words)+" "+statistics.guessedWordsCount);
 		viewedWords.setText(getString(R.string.viewed_words)+" "+statistics.viewedWordsCount);
+		menuProgress.setVisibility(View.GONE);
+		menuContent.setVisibility(View.VISIBLE);
 	}
 }

@@ -1,34 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clickable="true"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/left_drawer_root"
     android:background="@drawable/drawer_bg"
-    android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/total_words"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/NormalText"
-        android:textColor="@color/drawer_text"
-        android:text="" />
-
-    <TextView
-        android:id="@+id/guessed_words"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/drawer_text"
-        style="@style/NormalText"
-        android:text="" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
     
-    <TextView
-        android:id="@+id/views_words"
+    <ProgressBar android:id="@+id/left_drawer_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/drawer_text"
-        style="@style/NormalText"
-        android:text="" />
-    
-</LinearLayout>
+        android:layout_gravity="center"/>
 
+    <LinearLayout
+        android:id="@+id/left_drawer_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/total_words"
+            style="@style/NormalText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/drawer_text" />
+
+        <TextView
+            android:id="@+id/guessed_words"
+            style="@style/NormalText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/drawer_text" />
+
+        <TextView
+            android:id="@+id/views_words"
+            style="@style/NormalText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/drawer_text" />
+    </LinearLayout>
+
+</FrameLayout>
