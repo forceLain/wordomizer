@@ -1,6 +1,6 @@
 package ru.forcelain.wordomizer.adapter;
 
-import ru.forcelain.wordomizer.R;
+import ru.forcelain.wordomizer2.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

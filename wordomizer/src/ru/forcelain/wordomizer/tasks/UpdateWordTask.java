@@ -5,10 +5,10 @@ import ru.forcelain.wordomizer.model.Word;
 import android.content.Context;
 import android.os.AsyncTask;
 
-public class UpdateWordTask extends AsyncTask<Word, Void, Void> {
+public class UpdateWordTask extends AsyncTask<Word, Void, Integer> {
 	
 	public interface UpdateWordCallback {
-		public void onWordUpdated();
+		public void onWordUpdated(int guessedWordsCount);
 	}
 
 	private Context context;
@@ -20,16 +20,17 @@ public class UpdateWordTask extends AsyncTask<Word, Void, Void> {
 	}
 	
 	@Override
-	protected Void doInBackground(Word... params) {
+	protected Integer doInBackground(Word... params) {
 		Word word = params[0];
 		DbHelper dbHelper = new DbHelper(context);
 		dbHelper.updateWord(word);
-		return null;
+		int guessedWordsCount = dbHelper.getGuessedWordsCount();
+		return guessedWordsCount;
 	}
 	
 	@Override
-	protected void onPostExecute(Void result) {
-		updateWordCallback.onWordUpdated();
+	protected void onPostExecute(Integer result) {
+		updateWordCallback.onWordUpdated(result);
 	}
 
 }

@@ -1,6 +1,6 @@
 package ru.forcelain.wordomizer.activity;
 
-import ru.forcelain.wordomizer.R;
+import ru.forcelain.wordomizer2.R;
 import ru.forcelain.wordomizer.db.DbHelper;
 import android.content.Intent;
 import android.os.AsyncTask;

@@ -4,22 +4,25 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import ru.forcelain.wordomizer.R;
 import ru.forcelain.wordomizer.animation.SimpleAnimationListener;
 import ru.forcelain.wordomizer.model.Statistics;
 import ru.forcelain.wordomizer.model.Word;
+import ru.forcelain.wordomizer.playservice.AccomplishmentsOutbox;
 import ru.forcelain.wordomizer.tasks.GetRandomWordTask;
 import ru.forcelain.wordomizer.tasks.GetRandomWordTask.WordCallback;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask;
 import ru.forcelain.wordomizer.tasks.GetStatisticsTask.StatisticsCallBack;
 import ru.forcelain.wordomizer.tasks.UpdateWordTask;
 import ru.forcelain.wordomizer.tasks.UpdateWordTask.UpdateWordCallback;
+import ru.forcelain.wordomizer2.R;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,7 +33,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class GameActivity extends FragmentActivity implements OnClickListener, StatisticsCallBack{
+import com.google.android.gms.games.Player;
+import com.google.example.games.basegameutils.BaseGameActivity;
+
+public class GameActivity extends BaseGameActivity implements OnClickListener, StatisticsCallBack{
 	
 	public static final String TAG = GameActivity.class.getSimpleName();
 	public static final int SUCCESS = 1;
@@ -47,18 +53,25 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	private View menu;
 	private View menuProgress;
 	private View menuContent;
+	private View showAchievements;
+	private View showLeaderboard;
 	private TextView totalWords;
 	private TextView guessedWords;
 	private TextView viewedWords;
 	private TextView hint;
+	private TextView login;
 	private GetRandomWordTask getRandomWordTask;
 	private UpdateWordTask updateWordTask;
 	private GetStatisticsTask getStatisticsTask;
 	private Word sourceWord;
-	private int currentPosition;
+	private int currentPosition;		
+
+	
+	AccomplishmentsOutbox outbox = new AccomplishmentsOutbox();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		enableDebugLog(true, TAG);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -68,6 +81,8 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		menu.setOnClickListener(this);
 		menuProgress = findViewById(R.id.left_drawer_progress);
 		menuContent = findViewById(R.id.left_drawer_content);
+		menuProgress.setVisibility(View.VISIBLE);
+		menuContent.setVisibility(View.GONE);
 		totalWords = (TextView) findViewById(R.id.total_words);
 		guessedWords = (TextView) findViewById(R.id.guessed_words);
 		viewedWords = (TextView) findViewById(R.id.views_words);
@@ -79,6 +94,13 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		shuffle.setOnClickListener(this);
 		next = findViewById(R.id.next);
 		next.setOnClickListener(this);
+		login = (TextView) findViewById(R.id.login);
+		login.setOnClickListener(this);
+		showAchievements = findViewById(R.id.show_achievements);
+		showAchievements.setOnClickListener(this);
+		showLeaderboard = findViewById(R.id.show_leaderboard);
+		showLeaderboard.setOnClickListener(this);
+		outbox.loadLocal(this);
 		newWord(true);			
 	}
 
@@ -258,13 +280,51 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 	};
 	
 	private UpdateWordTask.UpdateWordCallback updateWordCallback = new UpdateWordCallback() {
-		
+
 		@Override
-		public void onWordUpdated() {
+		public void onWordUpdated(int guessedWordsCount) {
+			outbox.score = guessedWordsCount;
+			checkForAchievements(guessedWordsCount);
+	        pushAccomplishments();
 			uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);
 		}
 	};
 	
+	private void checkForAchievements(int guessedWordsCount){
+		if (guessedWordsCount == 10){
+			outbox.g10Achievement = true;
+		}
+		
+		if (guessedWordsCount == 100){
+			outbox.g100Achievement = true;
+		}
+	}
+	
+	private void pushAccomplishments() {
+		if (!isSignedIn()) {
+            // can't push to the cloud, so save locally
+			outbox.saveLocal(this);
+            return;
+        }
+		
+		if (outbox.g10Achievement){
+			getGamesClient().unlockAchievement(getString(R.string.achievement_10));
+			outbox.g10Achievement = false;
+		}
+		
+		if (outbox.g100Achievement){
+			getGamesClient().unlockAchievement(getString(R.string.achievement_100));
+			outbox.g100Achievement = false;
+		}
+		
+		if (outbox.score > 0){
+			getGamesClient().submitScore(getString(R.string.leaderboard_top), outbox.score);
+			outbox.score = -1;
+		}
+		
+		outbox.saveLocal(this);
+	}
+
 	private void fadeIn() {
 		Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
 		fadeIn.setFillAfter(true);
@@ -306,7 +366,55 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		case R.id.menu:
 			toggleDrawer();
 			break;
+		case R.id.login:
+			login();
+			break;
+		case R.id.show_achievements:
+			showAchivements();
+			break;
+		case R.id.show_leaderboard:
+			showLeaderboard();
+			break;
 		}
+	}
+
+	private void showLeaderboard() {
+		if (isSignedIn()) {
+            startActivityForResult(getGamesClient().getAllLeaderboardsIntent(), 0);
+        } else {
+            showAlert(getString(R.string.leaderboards_not_available));
+        }
+	}
+
+	private void showAchivements() {
+		if (isSignedIn()) {
+            startActivityForResult(getGamesClient().getAchievementsIntent(), 0);
+        } else {
+            showAlert(getString(R.string.achievements_not_available));
+        }
+	}
+
+	private void login() {
+		if (isSignedIn()){
+			askLogOut();
+		} else {
+			beginUserInitiatedSignIn();
+		}
+	}
+
+	private void askLogOut() {
+		AlertDialog.Builder b = new AlertDialog.Builder(this);
+		b.setMessage(R.string.ask_logout);
+		b.setNegativeButton(R.string.cancel, null);
+		b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				signOut();
+				login.setText(R.string.login);
+			}
+		});
+		b.create().show();
+		
 	}
 
 	@Override
@@ -368,5 +476,23 @@ public class GameActivity extends FragmentActivity implements OnClickListener, S
 		viewedWords.setText(getString(R.string.viewed_words)+" "+statistics.viewedWordsCount);
 		menuProgress.setVisibility(View.GONE);
 		menuContent.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onSignInFailed() {
+		login.setText(getString(R.string.login));
+	}
+
+	@Override
+	public void onSignInSucceeded() {
+		Player p = getGamesClient().getCurrentPlayer();
+        String displayName;
+        if (p == null) {
+            Log.w(TAG, "mGamesClient.getCurrentPlayer() is NULL!");
+            displayName = "???";
+        } else {
+            displayName = p.getDisplayName();
+        }
+		login.setText(displayName);
 	}
 }

@@ -40,6 +40,20 @@
             android:layout_height="wrap_content"
             android:text=""
             android:textColor="@color/drawer_text" />
+        
+        <Button android:id="@+id/show_achievements"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            style="@style/WordomizerButtonNormalText"
+            android:layout_margin="10dp"
+            android:text="@string/show_achievements"/>
+        
+        <Button android:id="@+id/show_leaderboard"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            style="@style/WordomizerButtonNormalText"
+            android:layout_margin="10dp"
+            android:text="@string/show_leaderboard"/>
     </LinearLayout>
 
 </FrameLayout>
