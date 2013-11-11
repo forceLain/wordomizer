@@ -5,4 +5,44 @@
     android:background="@drawable/grid"
     tools:context=".EndActivity" >
 
+    <TextView
+        android:id="@+id/end_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="#770055FF"
+        android:gravity="center"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:text="@string/end_text"
+        android:textColor="@android:color/white" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/end_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/achievements"
+            style="@style/WordomizerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/game_button"
+            android:text="@string/show_achievements" />
+        
+        <Button
+            android:id="@+id/leaders"
+            style="@style/WordomizerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/game_button"
+            android:text="@string/show_leaderboard" />
+
+    </LinearLayout>
+
 </RelativeLayout>

@@ -17,6 +17,7 @@ import ru.forcelain.wordomizer.tasks.UpdateWordTask.UpdateWordCallback;
 import ru.forcelain.wordomizer2.R;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,7 +33,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.games.Player;
 import com.google.example.games.basegameutils.BaseGameActivity;
@@ -45,6 +45,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	protected static final int END = 3;
 	protected static final int DELAY = 500;
 	protected static final int ACHIEVEMENT_SEQUENCE = 10;
+	protected static final int ACHIEVEMENT_DOUBLE_GUESS_DELAY = 10000;
 	
 	private DrawerLayout drawerLayout;
 	private View leftDrawer;
@@ -69,6 +70,8 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private Word sourceWord;
 	private int currentPosition;
 	private int inSequenceCounter = 0;
+	private long roundStartTime;
+	private long roundEndTime;
 
 	
 	AccomplishmentsOutbox outbox = new AccomplishmentsOutbox();
@@ -188,6 +191,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		if (userWord.equals(sourceWord.word)){
 			colorUiResult(true);
 			inSequenceCounter++;
+			roundEndTime = System.currentTimeMillis();
 			sourceWord.guessed = true;
 			updateWordTask = new UpdateWordTask(this, updateWordCallback);
 			updateWordTask.execute(sourceWord);
@@ -282,7 +286,8 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 				hint.setText(sourceWord.hint);
 				clearButtons();
 				populateButtons();
-				fadeIn();	
+				fadeIn();
+				roundStartTime = System.currentTimeMillis();
 			} else {
 				showEnd();
 			}
@@ -320,6 +325,10 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		if (totalWordsCount == guessedWordsCount){
 			outbox.allWords = true;
 		}
+		
+		if (roundEndTime - roundStartTime < ACHIEVEMENT_DOUBLE_GUESS_DELAY){
+			outbox.doubleWord = true;
+		}
 	}
 	
 	private void pushAccomplishments() {
@@ -347,6 +356,11 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		if (outbox.in10sequence){
 			getGamesClient().unlockAchievement(getString(R.string.achievement_10_in_sequence));
 			outbox.in10sequence = false;
+		}
+		
+		if (outbox.doubleWord){
+			getGamesClient().unlockAchievement(getString(R.string.achievement_double));
+			outbox.doubleWord = false;
 		}
 		
 		if (outbox.score > 0){
@@ -414,7 +428,8 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	}
 
 	private void showEnd() {
-		Toast.makeText(this, "THE END", Toast.LENGTH_LONG).show();
+		startActivity(new Intent(this, EndActivity.class));
+		finish();
 	}
 
 	private void showLeaderboard() {

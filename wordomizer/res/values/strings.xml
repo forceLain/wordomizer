@@ -19,4 +19,6 @@
     <string name="first10_toast_text">Первые 10!</string>
     <string name="ask_logout">Выйти из текущего аккаунта?</string>
     <string name="cancel">Отмена</string>
+    <string name="end_text">Если Вы видете этот текст, должно быть Вам очень нравится разгадывать анаграммы\n
+        К сожалению, у нас кончились слова, что бы загадать Вам</string>
 </resources>

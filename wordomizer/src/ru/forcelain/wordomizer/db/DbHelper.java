@@ -19,7 +19,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	private static final String TAG = DbHelper.class.getSimpleName();
 
 	public static final String DATABASE_NAME = "WordomizerData";
-	private static final int DATABASE_VERSION = 208;
+	private static final int DATABASE_VERSION = 210;
 
 	private static final String TABLE_WORDS = "words";
 	private static final String WORDS_ID = "_id";
