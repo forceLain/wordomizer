@@ -59,6 +59,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private View menuContent;
 	private View showAchievements;
 	private View showLeaderboard;
+	private View controlls;
 	private TextView totalWords;
 	private TextView guessedWords;
 	private TextView viewedWords;
@@ -72,7 +73,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private int inSequenceCounter = 0;
 	private long roundStartTime;
 	private long roundEndTime;
-
+	private boolean firstRound;
 	
 	AccomplishmentsOutbox outbox = new AccomplishmentsOutbox();
 
@@ -107,39 +108,41 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		showAchievements.setOnClickListener(this);
 		showLeaderboard = findViewById(R.id.show_leaderboard);
 		showLeaderboard.setOnClickListener(this);
+		controlls = findViewById(R.id.controlls);
 		outbox.loadLocal(this);
-		newWord(true);			
+		firstRound = true;
+		newWord();			
 	}
 
-	private void newWord(boolean immediate) {
+	private void newWord() {
 		setControlsEnabled(false);
 		currentPosition = 0;
-		if (immediate){
-			hide();
-		} else {
-			fadeOut();			
-		}
-	}
-	
-	private void hide(){
-		AlphaAnimation alphaUp = new AlphaAnimation(0, 0);
-        alphaUp.setFillAfter(true);
-        fadingLayer.startAnimation(alphaUp);
-		getRandomWordTask = new GetRandomWordTask(GameActivity.this, getRandomWordCallback);
-		getRandomWordTask.execute();
+		fadeOut();			
 	}
 
 	private void fadeOut() {
-		Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
-		fadeOut.setFillAfter(true);
-		fadeOut.setAnimationListener(new SimpleAnimationListener(){
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				getRandomWordTask = new GetRandomWordTask(GameActivity.this, getRandomWordCallback);
-				getRandomWordTask.execute();
-			}
-		});
-		fadingLayer.startAnimation(fadeOut);
+		if (firstRound){
+			AlphaAnimation alphaUp = new AlphaAnimation(0, 0);
+	        alphaUp.setFillAfter(true);
+	        fadingLayer.startAnimation(alphaUp);
+			getRandomWordTask = new GetRandomWordTask(GameActivity.this, getRandomWordCallback);
+			getRandomWordTask.execute();
+			menu.setVisibility(View.INVISIBLE);
+			login.setVisibility(View.INVISIBLE);
+			hint.setVisibility(View.INVISIBLE);
+			controlls.setVisibility(View.INVISIBLE);
+		} else {
+			Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+			fadeOut.setFillAfter(true);
+			fadeOut.setAnimationListener(new SimpleAnimationListener(){
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					getRandomWordTask = new GetRandomWordTask(GameActivity.this, getRandomWordCallback);
+					getRandomWordTask.execute();
+				}
+			});
+			fadingLayer.startAnimation(fadeOut);
+		}
 	}
 
 	private void setControlsEnabled(boolean enabled) {
@@ -381,6 +384,13 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 			}
 		});
 		fadingLayer.startAnimation(fadeIn);
+		if (firstRound){
+			menu.setVisibility(View.VISIBLE);
+			login.setVisibility(View.VISIBLE);
+			hint.setVisibility(View.VISIBLE);
+			controlls.setVisibility(View.VISIBLE);
+			firstRound = false;
+		}
 	}
 	
 	private Handler uiHandler = new Handler(new Handler.Callback(){
@@ -389,7 +399,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		public boolean handleMessage(Message msg) {
 			switch (msg.what) {
 			case SUCCESS:
-				newWord(false);
+				newWord();
 				break;
 			case FAIL:
 				clearUserButtons(0);
@@ -410,7 +420,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 			shuffle();
 			break;
 		case R.id.next:
-			newWord(false);
+			newWord();
 			break;
 		case R.id.menu:
 			toggleDrawer();
