@@ -14,13 +14,13 @@ public class GetRandomWordTask extends AsyncTask<Void, Void, Word> {
 	}
 	
 	private Context context;
-	private Random randrom;
+	private Random random;
 	private WordCallback getRandomWordCallback;
 
 	public GetRandomWordTask(Context context, WordCallback getRandomWordCallback){
 		this.context = context;
 		this.getRandomWordCallback = getRandomWordCallback;
-		randrom = new Random();		
+		random = new Random();		
 	}
 	
 	@Override
@@ -28,16 +28,20 @@ public class GetRandomWordTask extends AsyncTask<Void, Void, Word> {
 		
 		DbHelper dbHelper = new DbHelper(context);
 		Word word;
-		int wordsCount = dbHelper.getWordsCount();
-		do {
-			int randromId = randrom.nextInt(wordsCount);
-			word = dbHelper.getWord(randromId);
-		} while (word.guessed);
+		boolean hasUngessedWords = dbHelper.getUnguessedWordsCount() > 0;
+		if (hasUngessedWords){
+			int wordsCount = dbHelper.getWordsCount();
+			do {
+				int randromId = random.nextInt(wordsCount)+1;
+				word = dbHelper.getWord(randromId);
+			} while (word.guessed);
+			
+			word.viewed = true;
+			dbHelper.updateWord(word);
+			return word;
+		}
 		
-		word.viewed = true;
-		dbHelper.updateWord(word);
-		
-		return word;
+		return null;
 	}
 	
 	@Override

@@ -32,6 +32,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.games.Player;
 import com.google.example.games.basegameutils.BaseGameActivity;
@@ -41,7 +42,9 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	public static final String TAG = GameActivity.class.getSimpleName();
 	public static final int SUCCESS = 1;
 	public static final int FAIL = 0;
+	protected static final int END = 3;
 	protected static final int DELAY = 500;
+	protected static final int ACHIEVEMENT_SEQUENCE = 10;
 	
 	private DrawerLayout drawerLayout;
 	private View leftDrawer;
@@ -64,7 +67,8 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private UpdateWordTask updateWordTask;
 	private GetStatisticsTask getStatisticsTask;
 	private Word sourceWord;
-	private int currentPosition;		
+	private int currentPosition;
+	private int inSequenceCounter = 0;
 
 	
 	AccomplishmentsOutbox outbox = new AccomplishmentsOutbox();
@@ -183,11 +187,13 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		String userWord = construcWord();
 		if (userWord.equals(sourceWord.word)){
 			colorUiResult(true);
+			inSequenceCounter++;
 			sourceWord.guessed = true;
 			updateWordTask = new UpdateWordTask(this, updateWordCallback);
 			updateWordTask.execute(sourceWord);
 		} else {
 			colorUiResult(false);
+			inSequenceCounter = 0;
 			uiHandler.sendEmptyMessageDelayed(FAIL, DELAY);
 		}
 	}
@@ -271,32 +277,48 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private GetRandomWordTask.WordCallback getRandomWordCallback = new WordCallback() {		
 		@Override
 		public void onWordReceived(Word word) {
-			sourceWord = word;
-			hint.setText(sourceWord.hint);
-			clearButtons();
-			populateButtons();
-			fadeIn();
+			if (word != null){
+				sourceWord = word;
+				hint.setText(sourceWord.hint);
+				clearButtons();
+				populateButtons();
+				fadeIn();	
+			} else {
+				showEnd();
+			}
 		}
 	};
 	
 	private UpdateWordTask.UpdateWordCallback updateWordCallback = new UpdateWordCallback() {
 
 		@Override
-		public void onWordUpdated(int guessedWordsCount) {
+		public void onWordUpdated(int guessedWordsCount, int totalWordsCount) {
 			outbox.score = guessedWordsCount;
-			checkForAchievements(guessedWordsCount);
+			checkForAchievements(guessedWordsCount, totalWordsCount);
 	        pushAccomplishments();
-			uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);
+	        if (guessedWordsCount == totalWordsCount){
+	        	uiHandler.sendEmptyMessageDelayed(END, DELAY);	
+	        } else {
+	        	uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);	        	
+	        }
 		}
 	};
 	
-	private void checkForAchievements(int guessedWordsCount){
+	private void checkForAchievements(int guessedWordsCount, int totalWordsCount){
 		if (guessedWordsCount == 10){
 			outbox.g10Achievement = true;
 		}
 		
 		if (guessedWordsCount == 100){
 			outbox.g100Achievement = true;
+		}
+		
+		if (inSequenceCounter == ACHIEVEMENT_SEQUENCE){
+			outbox.in10sequence = true;
+		}
+		
+		if (totalWordsCount == guessedWordsCount){
+			outbox.allWords = true;
 		}
 	}
 	
@@ -315,6 +337,16 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		if (outbox.g100Achievement){
 			getGamesClient().unlockAchievement(getString(R.string.achievement_100));
 			outbox.g100Achievement = false;
+		}
+		
+		if (outbox.allWords){
+			getGamesClient().unlockAchievement(getString(R.string.achievement_all_words));
+			outbox.allWords = false;
+		}
+		
+		if (outbox.in10sequence){
+			getGamesClient().unlockAchievement(getString(R.string.achievement_10_in_sequence));
+			outbox.in10sequence = false;
 		}
 		
 		if (outbox.score > 0){
@@ -348,6 +380,9 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 			case FAIL:
 				clearUserButtons(0);
 				break;
+			case END:
+				showEnd();
+				break;
 			}
 			return false;
 		}
@@ -378,9 +413,13 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		}
 	}
 
+	private void showEnd() {
+		Toast.makeText(this, "THE END", Toast.LENGTH_LONG).show();
+	}
+
 	private void showLeaderboard() {
 		if (isSignedIn()) {
-            startActivityForResult(getGamesClient().getAllLeaderboardsIntent(), 0);
+            startActivityForResult(getGamesClient().getLeaderboardIntent(getString(R.string.leaderboard_top)), 0);
         } else {
             showAlert(getString(R.string.leaderboards_not_available));
         }
