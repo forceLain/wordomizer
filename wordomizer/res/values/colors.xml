@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="drawer_bg">#00275E</color>
+    <color name="drawer_bg_solid">#E005326D</color>
+    <color name="main_bg_solid">#FFFFFF</color>
     <color name="drawer_text">#FFFFFF</color>
 </resources>

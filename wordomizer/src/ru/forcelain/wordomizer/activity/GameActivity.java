@@ -60,6 +60,8 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private View showAchievements;
 	private View showLeaderboard;
 	private View controlls;
+	private View progressBar;
+	private View topLayer;
 	private TextView totalWords;
 	private TextView guessedWords;
 	private TextView viewedWords;
@@ -110,7 +112,9 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		showLeaderboard.setOnClickListener(this);
 		controlls = findViewById(R.id.controlls);
 		outbox.loadLocal(this);
-		firstRound = true;
+		firstRound = (savedInstanceState == null);
+		progressBar = findViewById(R.id.progressBar);
+		topLayer = findViewById(R.id.top_layer);
 		newWord();			
 	}
 
@@ -127,10 +131,10 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	        fadingLayer.startAnimation(alphaUp);
 			getRandomWordTask = new GetRandomWordTask(GameActivity.this, getRandomWordCallback);
 			getRandomWordTask.execute();
-			menu.setVisibility(View.INVISIBLE);
-			login.setVisibility(View.INVISIBLE);
-			hint.setVisibility(View.INVISIBLE);
-			controlls.setVisibility(View.INVISIBLE);
+			topLayer.setVisibility(View.GONE);
+			fadingLayer.setVisibility(View.GONE);
+			controlls.setVisibility(View.GONE);
+			progressBar.setVisibility(View.VISIBLE);
 		} else {
 			Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 			fadeOut.setFillAfter(true);
@@ -384,11 +388,11 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 			}
 		});
 		fadingLayer.startAnimation(fadeIn);
-		if (firstRound){
-			menu.setVisibility(View.VISIBLE);
-			login.setVisibility(View.VISIBLE);
-			hint.setVisibility(View.VISIBLE);
+		if (firstRound){			
+			topLayer.setVisibility(View.VISIBLE);
+			fadingLayer.setVisibility(View.VISIBLE);
 			controlls.setVisibility(View.VISIBLE);
+			progressBar.setVisibility(View.GONE);
 			firstRound = false;
 		}
 	}
