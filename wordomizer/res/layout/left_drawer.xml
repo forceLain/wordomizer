@@ -19,7 +19,7 @@
 
         <TextView
             android:id="@+id/total_words"
-            style="@style/NormalText"
+            style="@style/MenuText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
@@ -27,7 +27,7 @@
 
         <TextView
             android:id="@+id/guessed_words"
-            style="@style/NormalText"
+            style="@style/MenuText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
@@ -35,7 +35,7 @@
 
         <TextView
             android:id="@+id/views_words"
-            style="@style/NormalText"
+            style="@style/MenuText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
@@ -44,14 +44,14 @@
         <Button android:id="@+id/show_achievements"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            style="@style/WordomizerButtonNormalText"
+            style="@style/MenuButton"
             android:layout_margin="10dp"
             android:text="@string/show_achievements"/>
         
         <Button android:id="@+id/show_leaderboard"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            style="@style/WordomizerButtonNormalText"
+            style="@style/MenuButton"
             android:layout_margin="10dp"
             android:text="@string/show_leaderboard"/>
     </LinearLayout>
