@@ -1,10 +1,10 @@
 <resources>
-    <dimen name="drawer_width">300dp</dimen>
+    <dimen name="drawer_width">400dp</dimen>
     <dimen name="button_text_size">40sp</dimen>
 	<dimen name="menu_text_size">18sp</dimen>
 	<dimen name="controls_text_size">30sp</dimen>
 	<dimen name="menu_button_text_size">18sp</dimen>
 	<dimen name="button_size">80dp</dimen>
 	<dimen name="controll_margin">20dp</dimen>
-	<dimen name="controll_margin_bot">10dp</dimen>
+	<dimen name="controll_margin_bot">20dp</dimen>
 </resources>
