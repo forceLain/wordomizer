@@ -26,9 +26,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:background="@drawable/game_button"
-            android:text="@string/menu"
             android:layout_marginLeft="@dimen/controll_margin"
+            android:background="@drawable/game_button"
+            android:drawableLeft="@drawable/ic_stats"
+            android:drawablePadding="5dp"
+            android:gravity="left|center_vertical"
+            android:text="@string/menu"
             android:textColor="@android:color/white" />
         
         <TextView
@@ -39,6 +42,9 @@
             android:layout_gravity="right"
             android:layout_marginRight="@dimen/controll_margin"
             android:background="@drawable/game_button"
+            android:drawableLeft="@drawable/ic_google"
+            android:drawablePadding="5dp"
+            android:gravity="center_vertical"
             android:text="@string/login"
             android:textColor="@android:color/white" />
         
@@ -86,16 +92,17 @@
         android:layout_margin="5dp"
         android:orientation="horizontal" >
 
-        <Button
+        <ImageButton
             android:id="@+id/shuffle"
             style="@style/WordomizerButton"
             android:layout_width="@dimen/button_size"
             android:layout_height="@dimen/button_size"
             android:layout_marginRight="5dp"
             android:background="@drawable/game_button_no_disable"
-            android:text="@string/shuffle" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_shuffle" />
 
-        <Button
+        <ImageButton
             android:id="@+id/next"
             style="@style/WordomizerButton"
             android:layout_width="@dimen/button_size"
@@ -103,7 +110,9 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/game_button_no_disable"
-            android:text="@string/next" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_next" />
+
     </LinearLayout>
 
 </LinearLayout>
