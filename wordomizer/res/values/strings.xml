@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Wordomizer</string>
+    <string name="app_name">Викторина Анаграмма</string>
     <string name="start">Старт</string>
-    <string name="shuffle">↻</string>
-    <string name="next">⇒</string>
-    <string name="search">\?</string>
     <string name="menu">Статистика</string>
     <string name="login">Вход с Google</string>
     <string name="total_words">Слов в базе:</string>
     <string name="guessed_words">Отгадано:</string>
     <string name="viewed_words">Просмотрено:</string>
-    <string name="last_word">Угадано:</string>
-    <string name="hint">Подсказка</string>
     <string name="show_achievements">Достижения</string>
     <string name="show_leaderboard">Список лидеров</string>
     <string name="achievements_not_available">Пожалуйста, зарегистрируйтесь, что бы видеть достижения</string>
     <string name="leaderboards_not_available">Пожалуйста, зарегистрируйтесь, что бы видеть список лидеров</string>
-    <string name="first10_toast_text">Первые 10!</string>
     <string name="ask_logout">Выйти из текущего аккаунта?</string>
     <string name="cancel">Отмена</string>
     <string name="end_text">Если Вы видете этот текст, должно быть Вам очень нравится разгадывать анаграммы\n
         К сожалению, у нас кончились слова, что бы загадать Вам</string>
-    <string name="loading">Загрузка...</string>
+    <string name="cd_shuffle">Перемешать</string>
+    <string name="cd_next">Пропустить</string>
 </resources>
