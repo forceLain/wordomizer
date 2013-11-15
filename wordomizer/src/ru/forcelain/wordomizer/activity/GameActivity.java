@@ -325,6 +325,10 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 			outbox.g100Achievement = true;
 		}
 		
+		if (guessedWordsCount == 1000){
+			outbox.g1000Achievement = true;
+		}
+		
 		if (inSequenceCounter == ACHIEVEMENT_SEQUENCE){
 			outbox.in10sequence = true;
 		}
@@ -353,6 +357,11 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		if (outbox.g100Achievement){
 			getGamesClient().unlockAchievement(getString(R.string.achievement_100));
 			outbox.g100Achievement = false;
+		}
+		
+		if (outbox.g1000Achievement){
+			getGamesClient().unlockAchievement(getString(R.string.achievement_1000));
+			outbox.g1000Achievement = false;
 		}
 		
 		if (outbox.allWords){

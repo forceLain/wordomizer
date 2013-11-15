@@ -4,5 +4,5 @@
 	<dimen name="menu_text_size">18sp</dimen>
 	<dimen name="controls_text_size">22sp</dimen>
 	<dimen name="menu_button_text_size">18sp</dimen>
-	<dimen name="controll_margin_bot">0dp</dimen>
+	<dimen name="controll_margin_bot">5dp</dimen>
 </resources>

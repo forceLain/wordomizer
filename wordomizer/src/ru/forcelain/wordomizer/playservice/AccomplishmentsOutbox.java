@@ -12,6 +12,7 @@ public class AccomplishmentsOutbox {
 
 	public boolean g10Achievement = false;
 	public boolean g100Achievement = false;
+	public boolean g1000Achievement = false;
     public int score = -1;
 	public boolean in10sequence;
 	public boolean allWords;   
@@ -22,6 +23,7 @@ public class AccomplishmentsOutbox {
         Editor editor = pref.edit();
         editor.putBoolean(TAG +"."+ ctx.getString(R.string.achievement_10), g10Achievement);
         editor.putBoolean(TAG +"."+ ctx.getString(R.string.achievement_100), g100Achievement);
+        editor.putBoolean(TAG +"."+ ctx.getString(R.string.achievement_1000), g1000Achievement);
         editor.putBoolean(TAG +"."+ ctx.getString(R.string.achievement_all_words), allWords);
         editor.putBoolean(TAG +"."+ ctx.getString(R.string.achievement_10_in_sequence), in10sequence);
         editor.putBoolean(TAG +"."+ ctx.getString(R.string.achievement_double), doubleWord);
@@ -33,6 +35,7 @@ public class AccomplishmentsOutbox {
     	SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
     	g10Achievement = pref.getBoolean(TAG +"."+ ctx.getString(R.string.achievement_10), false);
     	g100Achievement = pref.getBoolean(TAG +"."+ ctx.getString(R.string.achievement_100), false);
+    	g1000Achievement = pref.getBoolean(TAG +"."+ ctx.getString(R.string.achievement_1000), false);
     	allWords = pref.getBoolean(TAG +"."+ ctx.getString(R.string.achievement_all_words), false);
     	in10sequence = pref.getBoolean(TAG +"."+ ctx.getString(R.string.achievement_10_in_sequence), false);
     	doubleWord = pref.getBoolean(TAG +"."+ ctx.getString(R.string.achievement_double), false);
