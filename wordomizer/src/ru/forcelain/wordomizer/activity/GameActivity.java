@@ -45,7 +45,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	protected static final int END = 3;
 	protected static final int DELAY = 500;
 	protected static final int ACHIEVEMENT_SEQUENCE = 10;
-	protected static final int ACHIEVEMENT_DOUBLE_GUESS_DELAY = 10000;
+	protected static final int ACHIEVEMENT_DOUBLE_GUESS_DELAY = 5000;
 	
 	private DrawerLayout drawerLayout;
 	private View leftDrawer;
@@ -317,6 +317,9 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	};
 	
 	private void checkForAchievements(int guessedWordsCount, int totalWordsCount){
+		Log.d(TAG, "guessedWordsCount "+guessedWordsCount+" totalWordsCount "+totalWordsCount);
+		Log.d(TAG, "inSequenceCounter "+inSequenceCounter);
+		Log.d(TAG, "roundEndTime "+roundEndTime+" roundStartTime "+roundStartTime+" round: "+(roundEndTime - roundStartTime));
 		if (guessedWordsCount == 10){
 			outbox.g10Achievement = true;
 		}
@@ -433,6 +436,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 			shuffle();
 			break;
 		case R.id.next:
+			inSequenceCounter = 0;
 			newWord();
 			break;
 		case R.id.menu:

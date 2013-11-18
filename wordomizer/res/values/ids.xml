@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="app_id">530504077259</string>
+    <string name="app_id">1084597303494</string>
 
-    <string name="achievement_10">CgkIy5-HpLgPEAIQAQ</string>
-    <string name="achievement_100">CgkIy5-HpLgPEAIQAg</string>
-    <string name="achievement_1000">CgkIy5-HpLgPEAIQBw</string>
-    <string name="achievement_10_in_sequence">CgkIy5-HpLgPEAIQBA</string>
-    <string name="achievement_all_words">CgkIy5-HpLgPEAIQBQ</string>
-    <string name="achievement_double">CgkIy5-HpLgPEAIQBg</string>
+    <string name="achievement_10">CgkIxvGluMgfEAIQAw</string>
+    <string name="achievement_100">CgkIxvGluMgfEAIQBQ</string>
+    <string name="achievement_1000">CgkIxvGluMgfEAIQBg</string>
+    <string name="achievement_10_in_sequence">CgkIxvGluMgfEAIQCA</string>
+    <string name="achievement_all_words">CgkIxvGluMgfEAIQBA</string>
+    <string name="achievement_double">CgkIxvGluMgfEAIQBw</string>
 
-    <string name="leaderboard_top">CgkIy5-HpLgPEAIQAw</string>
+    <string name="leaderboard_top">CgkIxvGluMgfEAIQAg</string>
 </resources>
