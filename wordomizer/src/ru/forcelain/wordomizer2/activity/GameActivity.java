@@ -1,20 +1,20 @@
-package ru.forcelain.wordomizer.activity;
+package ru.forcelain.wordomizer2.activity;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import ru.forcelain.wordomizer.animation.SimpleAnimationListener;
-import ru.forcelain.wordomizer.model.Statistics;
-import ru.forcelain.wordomizer.model.Word;
-import ru.forcelain.wordomizer.playservice.AccomplishmentsOutbox;
-import ru.forcelain.wordomizer.tasks.GetRandomWordTask;
-import ru.forcelain.wordomizer.tasks.GetRandomWordTask.WordCallback;
-import ru.forcelain.wordomizer.tasks.GetStatisticsTask;
-import ru.forcelain.wordomizer.tasks.GetStatisticsTask.StatisticsCallBack;
-import ru.forcelain.wordomizer.tasks.UpdateWordTask;
-import ru.forcelain.wordomizer.tasks.UpdateWordTask.UpdateWordCallback;
 import ru.forcelain.wordomizer2.R;
+import ru.forcelain.wordomizer2.animation.SimpleAnimationListener;
+import ru.forcelain.wordomizer2.model.Statistics;
+import ru.forcelain.wordomizer2.model.Word;
+import ru.forcelain.wordomizer2.playservice.AccomplishmentsOutbox;
+import ru.forcelain.wordomizer2.tasks.GetRandomWordTask;
+import ru.forcelain.wordomizer2.tasks.GetStatisticsTask;
+import ru.forcelain.wordomizer2.tasks.UpdateWordTask;
+import ru.forcelain.wordomizer2.tasks.GetRandomWordTask.WordCallback;
+import ru.forcelain.wordomizer2.tasks.GetStatisticsTask.StatisticsCallBack;
+import ru.forcelain.wordomizer2.tasks.UpdateWordTask.UpdateWordCallback;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;

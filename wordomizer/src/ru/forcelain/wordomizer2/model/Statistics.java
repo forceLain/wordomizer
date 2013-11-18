@@ -1,4 +1,4 @@
-package ru.forcelain.wordomizer.model;
+package ru.forcelain.wordomizer2.model;
 
 
 public class Statistics {

@@ -1,7 +1,7 @@
-package ru.forcelain.wordomizer.tasks;
+package ru.forcelain.wordomizer2.tasks;
 
-import ru.forcelain.wordomizer.db.DbHelper;
-import ru.forcelain.wordomizer.model.Word;
+import ru.forcelain.wordomizer2.db.DbHelper;
+import ru.forcelain.wordomizer2.model.Word;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -20,7 +20,7 @@ public class UpdateWordTask extends AsyncTask<Word, Void, WordsCountStruct> {
 	}
 	
 	@Override
-	protected ru.forcelain.wordomizer.tasks.WordsCountStruct doInBackground(Word... params) {
+	protected ru.forcelain.wordomizer2.tasks.WordsCountStruct doInBackground(Word... params) {
 		Word word = params[0];
 		DbHelper dbHelper = new DbHelper(context);
 		dbHelper.updateWord(word);

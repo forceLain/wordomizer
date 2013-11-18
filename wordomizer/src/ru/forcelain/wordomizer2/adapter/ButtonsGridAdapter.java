@@ -1,4 +1,4 @@
-package ru.forcelain.wordomizer.adapter;
+package ru.forcelain.wordomizer2.adapter;
 
 import ru.forcelain.wordomizer2.R;
 import android.content.Context;

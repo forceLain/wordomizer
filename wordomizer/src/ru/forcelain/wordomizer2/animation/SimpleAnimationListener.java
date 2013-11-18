@@ -1,4 +1,4 @@
-package ru.forcelain.wordomizer.animation;
+package ru.forcelain.wordomizer2.animation;
 
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;

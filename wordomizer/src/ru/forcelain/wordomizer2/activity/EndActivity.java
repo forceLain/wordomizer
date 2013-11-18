@@ -1,4 +1,4 @@
-package ru.forcelain.wordomizer.activity;
+package ru.forcelain.wordomizer2.activity;
 
 import ru.forcelain.wordomizer2.R;
 import android.os.Bundle;

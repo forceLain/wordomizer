@@ -1,9 +1,9 @@
-package ru.forcelain.wordomizer.tasks;
+package ru.forcelain.wordomizer2.tasks;
 
 import java.util.Random;
 
-import ru.forcelain.wordomizer.db.DbHelper;
-import ru.forcelain.wordomizer.model.Word;
+import ru.forcelain.wordomizer2.db.DbHelper;
+import ru.forcelain.wordomizer2.model.Word;
 import android.content.Context;
 import android.os.AsyncTask;
 

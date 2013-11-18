@@ -1,10 +1,10 @@
-package ru.forcelain.wordomizer.db;
+package ru.forcelain.wordomizer2.db;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import ru.forcelain.wordomizer.model.Word;
+import ru.forcelain.wordomizer2.model.Word;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

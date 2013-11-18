@@ -17,7 +17,7 @@
         <meta-data android:name="com.google.android.gms.games.APP_ID"
         android:value="@string/app_id" />
         <activity
-            android:name="ru.forcelain.wordomizer.activity.GameActivity"
+            android:name="ru.forcelain.wordomizer2.activity.GameActivity"
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" >
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="ru.forcelain.wordomizer.activity.EndActivity"
+            android:name="ru.forcelain.wordomizer2.activity.EndActivity"
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" >

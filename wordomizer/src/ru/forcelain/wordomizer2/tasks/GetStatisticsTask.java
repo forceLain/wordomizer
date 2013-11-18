@@ -1,7 +1,7 @@
-package ru.forcelain.wordomizer.tasks;
+package ru.forcelain.wordomizer2.tasks;
 
-import ru.forcelain.wordomizer.db.DbHelper;
-import ru.forcelain.wordomizer.model.Statistics;
+import ru.forcelain.wordomizer2.db.DbHelper;
+import ru.forcelain.wordomizer2.model.Statistics;
 import android.content.Context;
 import android.os.AsyncTask;
 
