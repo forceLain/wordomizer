@@ -12,9 +12,12 @@
     <string name="achievements_not_available">Пожалуйста, зарегистрируйтесь, что бы видеть достижения</string>
     <string name="leaderboards_not_available">Пожалуйста, зарегистрируйтесь, что бы видеть список лидеров</string>
     <string name="ask_logout">Выйти из текущего аккаунта?</string>
+    <string name="ask_rate">Мы будем рады любому отзыву!</string>
+    <string name="rate_ok">Оставить отзыв</string>
     <string name="cancel">Отмена</string>
     <string name="end_text">Если Вы видете этот текст, должно быть Вам очень нравится разгадывать анаграммы\n
         К сожалению, у нас кончились слова, что бы загадать Вам</string>
     <string name="cd_shuffle">Перемешать</string>
     <string name="cd_next">Пропустить</string>
+    <string name="rate_text">5+</string>
 </resources>

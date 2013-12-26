@@ -16,8 +16,10 @@ import ru.forcelain.wordomizer2.tasks.GetRandomWordTask.WordCallback;
 import ru.forcelain.wordomizer2.tasks.GetStatisticsTask.StatisticsCallBack;
 import ru.forcelain.wordomizer2.tasks.UpdateWordTask.UpdateWordCallback;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -59,6 +61,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private View menuContent;
 	private View showAchievements;
 	private View showLeaderboard;
+	private View rateApp;
 	private View controlls;
 	private View progressBar;
 	private View topLayer;
@@ -110,6 +113,8 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		showAchievements.setOnClickListener(this);
 		showLeaderboard = findViewById(R.id.show_leaderboard);
 		showLeaderboard.setOnClickListener(this);
+		rateApp = findViewById(R.id.rate);
+		rateApp.setOnClickListener(this);
 		controlls = findViewById(R.id.controlls);
 		outbox.loadLocal(this);
 		firstRound = (savedInstanceState == null);
@@ -451,6 +456,33 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		case R.id.show_leaderboard:
 			showLeaderboard();
 			break;
+		case R.id.rate:
+			askForRate();
+			break;
+		}
+	}
+	
+	private void askForRate() {
+		AlertDialog.Builder b = new AlertDialog.Builder(this);
+		b.setMessage(R.string.ask_rate);
+		b.setNegativeButton(R.string.cancel, null);
+		b.setPositiveButton(R.string.rate_ok, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				openMarket();
+			}
+		});
+		b.create().show();
+		
+	}
+
+	private void openMarket() {
+		Uri uri = Uri.parse("market://details?id=" + getPackageName());
+		Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+		try {
+			startActivity(goToMarket);
+		} catch (ActivityNotFoundException e) {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + getPackageName())));
 		}
 	}
 
