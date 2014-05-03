@@ -55,6 +55,7 @@
             style="@style/MenuButton"
             android:layout_margin="10dp"
             android:text="@string/show_leaderboard"/>
+        
     </LinearLayout>
 
 </FrameLayout>

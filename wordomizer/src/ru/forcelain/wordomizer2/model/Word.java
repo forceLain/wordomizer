@@ -10,6 +10,7 @@ public class Word {
 	public String hint;
 	public boolean guessed;
 	public boolean viewed;
+	public String parentTable;
 	
 	public String getRandomizedWord(){
 		int l = word.length();

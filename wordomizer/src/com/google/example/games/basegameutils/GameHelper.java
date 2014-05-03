@@ -21,7 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Vector;
 
 import ru.forcelain.wordomizer2.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;

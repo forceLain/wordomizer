@@ -24,8 +24,11 @@ public class GetStatisticsTask extends AsyncTask<Void, Void, Statistics> {
 		DbHelper dbHelper = new DbHelper(context);
 		Statistics statistics = new Statistics();
 		statistics.totalWordsCount = dbHelper.getWordsCount();
-		statistics.guessedWordsCount = dbHelper.getGuessedWordsCount();
-		statistics.viewedWordsCount = dbHelper.getViewedWordsCount();
+		statistics.totalEngWordsCount = dbHelper.getEngWordsCount();
+		statistics.guessedWordsCount = dbHelper.getGuessedWordsCount(DbHelper.TABLE_WORDS);
+		statistics.guessedEngWordsCount = dbHelper.getGuessedWordsCount(DbHelper.TABLE_WORDS_ENG);
+		statistics.viewedWordsCount = dbHelper.getViewedWordsCount(DbHelper.TABLE_WORDS);
+		statistics.viewedEngWordsCount = dbHelper.getViewedWordsCount(DbHelper.TABLE_WORDS_ENG);
 		return statistics;
 	}
 	

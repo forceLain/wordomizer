@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="rus_words_enabled"
+        android:title="@string/settings_rus_words" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="eng_words_enabled"
+        android:title="@string/settings_eng_words" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_show_ad"
+        android:summary="@string/settings_ad_summary"
+        android:title="@string/settings_ad_title" />
+</PreferenceScreen>

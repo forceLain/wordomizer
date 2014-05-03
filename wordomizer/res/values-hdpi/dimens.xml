@@ -3,8 +3,8 @@
 	<dimen name="menu_text_size">18sp</dimen>
 	<dimen name="controls_text_size">22sp</dimen>
 	<dimen name="menu_button_text_size">18sp</dimen>
-	<dimen name="button_size">60dp</dimen>
-	<dimen name="drawer_width">200dp</dimen>
+	<dimen name="button_size">50dp</dimen>
+	<dimen name="drawer_width">300dp</dimen>
 	<dimen name="controll_margin">5dp</dimen>
 	<dimen name="controll_margin_bot">5dp</dimen>
 </resources>

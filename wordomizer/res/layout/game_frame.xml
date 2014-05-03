@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_cust"
     android:gravity="center"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".activity.GameActivity" >
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:indeterminateDrawable="@drawable/progress_bar_custom"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@drawable/progress_bar_custom" />
 
     <FrameLayout
         android:id="@+id/top_layer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/controll_margin_bot"
         android:layout_marginLeft="@dimen/controll_margin"
-        android:layout_marginRight="@dimen/controll_margin"
-        android:layout_marginBottom="@dimen/controll_margin_bot" >
+        android:layout_marginRight="@dimen/controll_margin" >
 
         <TextView
             android:id="@+id/menu"
@@ -34,7 +36,7 @@
             android:gravity="left|center_vertical"
             android:text="@string/menu"
             android:textColor="@android:color/white" />
-        
+
         <TextView
             android:id="@+id/login"
             style="@style/Controls"
@@ -47,15 +49,14 @@
             android:gravity="center_vertical"
             android:text="@string/login"
             android:textColor="@android:color/white" />
-        
     </FrameLayout>
-    
+
     <LinearLayout
         android:id="@+id/fading_layer"
-        android:layout_marginLeft="@dimen/controll_margin"
-        android:layout_marginRight="@dimen/controll_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/controll_margin"
+        android:layout_marginRight="@dimen/controll_margin"
         android:gravity="center"
         android:orientation="vertical" >
 
@@ -63,9 +64,9 @@
             android:id="@+id/hint_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/controll_margin_bot"
             android:background="#770055FF"
             android:gravity="center"
-            android:layout_marginBottom="@dimen/controll_margin_bot"
             android:lines="3"
             android:padding="5dp"
             android:textColor="@android:color/white" />
@@ -84,7 +85,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
         </LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -93,7 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:orientation="horizontal" >
-        
+
         <TextView
             android:id="@+id/rate"
             style="@style/WordomizerButton"
@@ -102,21 +102,21 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/game_button"
-            android:textStyle="italic|bold"
             android:text="@string/rate_text"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textStyle="italic|bold" />
 
         <ImageButton
             android:id="@+id/shuffle"
             style="@style/WordomizerButton"
             android:layout_width="@dimen/button_size"
             android:layout_height="@dimen/button_size"
-            android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/game_button_no_disable"
+            android:contentDescription="@string/cd_shuffle"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_shuffle" 
-            android:contentDescription="@string/cd_shuffle"/>
+            android:src="@drawable/ic_shuffle" />
 
         <ImageButton
             android:id="@+id/next"
@@ -126,10 +126,31 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/game_button_no_disable"
+            android:contentDescription="@string/cd_next"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_next"
-            android:contentDescription="@string/cd_next" />
-
+            android:src="@drawable/ic_next" />
+        
+        <ImageButton android:id="@+id/show_prefs"
+            android:contentDescription="@string/cd_next"
+            android:layout_height="@dimen/button_size"
+            android:layout_width="@dimen/button_size"
+            style="@style/WordomizerButton"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/game_button"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_settings"/>
+        
+        <ImageButton android:id="@+id/show_suggestion"
+            android:contentDescription="@string/cd_suggestion"
+            android:layout_height="@dimen/button_size"
+            android:layout_width="@dimen/button_size"
+            style="@style/WordomizerButton"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/game_button"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_help"/>
     </LinearLayout>
 
 </LinearLayout>

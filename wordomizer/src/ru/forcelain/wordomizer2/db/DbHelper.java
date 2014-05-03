@@ -14,14 +14,15 @@ import android.util.Log;
 
 public class DbHelper extends SQLiteOpenHelper {
 	private static final String FILE_NAME = "defs.txt";
-	//private static final String FILE_NAME = "small.txt";
+	private static final String FILE_NAME_ENG = "defs_eng.txt";
 
 	private static final String TAG = DbHelper.class.getSimpleName();
 
 	public static final String DATABASE_NAME = "WordomizerData";
-	private static final int DATABASE_VERSION = 200;
+	private static final int DATABASE_VERSION = 201;
 
-	private static final String TABLE_WORDS = "words";
+	public static final String TABLE_WORDS = "words";
+	public static final String TABLE_WORDS_ENG = "words_eng";
 	private static final String WORDS_ID = "_id";
 	private static final String WORDS_WORD = "word";
 	private static final String WORDS_HINT = "hint";
@@ -29,6 +30,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	private static final String WORDS_VIEWED = "viewed";
 
 	private static int cachedWordsCount;
+	private static int cachedEngWordsCount;
 	
 	private Context ctx;
 
@@ -39,7 +41,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		final String Q = "CREATE TABLE IF NOT EXISTS " + TABLE_WORDS + "("
+		String Q = "CREATE TABLE IF NOT EXISTS " + TABLE_WORDS + "("
 				+ WORDS_ID + " integer primary key autoincrement, "
 				+ WORDS_WORD + " TEXT UNIQUE, "
 				+ WORDS_HINT + " TEXT, "
@@ -47,20 +49,40 @@ public class DbHelper extends SQLiteOpenHelper {
 				+ WORDS_VIEWED + " INTEGER);";
 		db.execSQL(Q);
 
-		insertWords(db);
+		insertWords(db, FILE_NAME, TABLE_WORDS);
+		
+		Q = "CREATE TABLE IF NOT EXISTS " + TABLE_WORDS_ENG + "("
+				+ WORDS_ID + " integer primary key autoincrement, "
+				+ WORDS_WORD + " TEXT UNIQUE, "
+				+ WORDS_HINT + " TEXT, "
+				+ WORDS_GUESSED + " INTEGER, "
+				+ WORDS_VIEWED + " INTEGER);";
+		db.execSQL(Q);
+
+		insertWords(db, FILE_NAME_ENG, TABLE_WORDS_ENG);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS "+TABLE_WORDS);
-		onCreate(db);
+		if (newVersion == 201){
+			String Q = "CREATE TABLE IF NOT EXISTS " + TABLE_WORDS_ENG + "("
+					+ WORDS_ID + " integer primary key autoincrement, "
+					+ WORDS_WORD + " TEXT UNIQUE, "
+					+ WORDS_HINT + " TEXT, "
+					+ WORDS_GUESSED + " INTEGER, "
+					+ WORDS_VIEWED + " INTEGER);";
+			db.execSQL(Q);
+
+			insertWords(db, FILE_NAME_ENG, TABLE_WORDS_ENG);
+		}
 	}
 
-	private void insertWords(SQLiteDatabase db) {
+	private void insertWords(SQLiteDatabase db, String fileName, String tableName) {
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					ctx.getAssets().open(FILE_NAME), "UTF-8"));
+					ctx.getAssets().open(fileName), "UTF-8"));
 			String line = reader.readLine();
+			db.beginTransaction();
 			while (line != null) {
 				String[] pair = line.split("\\|");
 				final ContentValues values = new ContentValues();
@@ -68,41 +90,45 @@ public class DbHelper extends SQLiteOpenHelper {
 				values.put(WORDS_HINT, pair[1]);
 				values.put(WORDS_GUESSED, 0);
 				values.put(WORDS_VIEWED, 0);
-				db.replace(TABLE_WORDS, null, values);
+				db.replace(tableName, null, values);
 				line = reader.readLine();
 			}
 			reader.close();
+			db.setTransactionSuccessful();
+			db.endTransaction();
 		} catch (IOException e) {
 			Log.e(TAG, Log.getStackTraceString(e));
 		}
 	}
 	
-	public Word getWord(int id){
+	public Word getWord(int id, String table){
 		SQLiteDatabase db = getWritableDatabase();
-		Cursor cursor = db.query(TABLE_WORDS, null, WORDS_ID+"="+id, null, null, null, null, "1");
+		Cursor cursor = db.query(table, null, WORDS_ID+"="+id, null, null, null, null, "1");
 		cursor.moveToFirst();
 		Word word = cursorToWord(cursor);
+		word.parentTable = table;
 		cursor.close();
 		db.close();
 		return word;
 	}
 	
-	public Word getWord(String wordToFind) {
+	public Word getWord(String wordToFind, String table) {
 		Word word = null;
 		SQLiteDatabase db = getWritableDatabase();
-		Cursor cursor = db.query(TABLE_WORDS, null, WORDS_WORD+"=?", new String[]{wordToFind}, null, null, null, "1");
+		Cursor cursor = db.query(table, null, WORDS_WORD+"=?", new String[]{wordToFind}, null, null, null, "1");
 		if (cursor.moveToFirst()){
 			word = cursorToWord(cursor);
 		}
+		word.parentTable = table;
 		cursor.close();
 		db.close();
 		return word;
 	}
 	
-	public void updateWord(Word word) {
+	public void updateWord(Word word, String table) {
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = wordToValues(word);
-		db.replace(TABLE_WORDS, null, values);
+		db.replace(table, null, values);
 		db.close();
 	}
 	
@@ -122,10 +148,26 @@ public class DbHelper extends SQLiteOpenHelper {
 		return cachedWordsCount;
 	}
 	
-	public int getUnguessedWordsCount(){
+	public int getEngWordsCount(){
+		if (cachedEngWordsCount == 0){
+			int count = 0;
+			SQLiteDatabase db = getWritableDatabase();
+			Cursor cursor = db.rawQuery("select count(*) from "+TABLE_WORDS_ENG, null);
+			if (cursor.moveToFirst()){
+				count = cursor.getInt(0);
+			}
+			cursor.close();
+			db.close();
+			cachedEngWordsCount = count;
+		}
+		
+		return cachedEngWordsCount;
+	}
+	
+	public int getUnguessedWordsCount(String tableName){
 		int count = 0;
 		SQLiteDatabase db = getWritableDatabase();
-		Cursor cursor = db.rawQuery("select count(*) from "+TABLE_WORDS+" where "+WORDS_GUESSED+"= 0", null);
+		Cursor cursor = db.rawQuery("select count(*) from "+tableName+" where "+WORDS_GUESSED+"= 0", null);
 		if (cursor.moveToFirst()){
 			count = cursor.getInt(0);
 		}
@@ -134,10 +176,10 @@ public class DbHelper extends SQLiteOpenHelper {
 		return count;
 	}
 	
-	public int getGuessedWordsCount(){
+	public int getGuessedWordsCount(String tableName){
 		int count = 0;
 		SQLiteDatabase db = getWritableDatabase();
-		Cursor cursor = db.rawQuery("select count(*) from "+TABLE_WORDS+" where "+WORDS_GUESSED+"= 1", null);
+		Cursor cursor = db.rawQuery("select count(*) from "+tableName+" where "+WORDS_GUESSED+"= 1", null);
 		if (cursor.moveToFirst()){
 			count = cursor.getInt(0);
 		}
@@ -146,10 +188,10 @@ public class DbHelper extends SQLiteOpenHelper {
 		return count;
 	}
 	
-	public int getViewedWordsCount(){
+	public int getViewedWordsCount(String tableName){
 		int count = 0;
 		SQLiteDatabase db = getWritableDatabase();
-		Cursor cursor = db.rawQuery("select count(*) from "+TABLE_WORDS+" where "+WORDS_VIEWED+"= 1", null);
+		Cursor cursor = db.rawQuery("select count(*) from "+tableName+" where "+WORDS_VIEWED+"= 1", null);
 		if (cursor.moveToFirst()){
 			count = cursor.getInt(0);
 		}
@@ -179,14 +221,14 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 	
 	private static String findString(Cursor cursor, String tableName){
-		return cursor.getString(cursor.getColumnIndex(tableName));
+		return cursor.getString(cursor.getColumnIndexOrThrow(tableName));
 	}
 	
 	private static boolean findBool(Cursor cursor, String tableName) {
-		return (cursor.getInt(cursor.getColumnIndex(tableName)) > 0);
+		return (cursor.getInt(cursor.getColumnIndexOrThrow(tableName)) > 0);
 	}
 	
 	private static int findInt(Cursor cursor, String tableName) {
-		return cursor.getInt(cursor.getColumnIndex(tableName));
+		return cursor.getInt(cursor.getColumnIndexOrThrow(tableName));
 	}
 }

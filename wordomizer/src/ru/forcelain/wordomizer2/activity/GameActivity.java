@@ -3,18 +3,21 @@ package ru.forcelain.wordomizer2.activity;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import ru.forcelain.wordomizer2.R;
 import ru.forcelain.wordomizer2.animation.SimpleAnimationListener;
 import ru.forcelain.wordomizer2.model.Statistics;
 import ru.forcelain.wordomizer2.model.Word;
+import ru.forcelain.wordomizer2.model.WordsCountStruct;
 import ru.forcelain.wordomizer2.playservice.AccomplishmentsOutbox;
 import ru.forcelain.wordomizer2.tasks.GetRandomWordTask;
-import ru.forcelain.wordomizer2.tasks.GetStatisticsTask;
-import ru.forcelain.wordomizer2.tasks.UpdateWordTask;
 import ru.forcelain.wordomizer2.tasks.GetRandomWordTask.WordCallback;
+import ru.forcelain.wordomizer2.tasks.GetStatisticsTask;
 import ru.forcelain.wordomizer2.tasks.GetStatisticsTask.StatisticsCallBack;
+import ru.forcelain.wordomizer2.tasks.UpdateWordTask;
 import ru.forcelain.wordomizer2.tasks.UpdateWordTask.UpdateWordCallback;
+import ru.forcelain.wordomizer2.utils.PrefUtils;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -27,6 +30,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
@@ -38,6 +42,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.games.Player;
 import com.google.example.games.basegameutils.BaseGameActivity;
+import com.purplebrain.adbuddiz.sdk.AdBuddiz;
+import com.purplebrain.adbuddiz.sdk.AdBuddizDelegate;
+import com.purplebrain.adbuddiz.sdk.AdBuddizError;
 
 public class GameActivity extends BaseGameActivity implements OnClickListener, StatisticsCallBack{
 	
@@ -56,11 +63,13 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private View fadingLayer;
 	private View shuffle;
 	private View next;
+	private View suggestion;
 	private View menu;
 	private View menuProgress;
 	private View menuContent;
 	private View showAchievements;
 	private View showLeaderboard;
+	private View showPrefs;
 	private View rateApp;
 	private View controlls;
 	private View progressBar;
@@ -79,6 +88,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private long roundStartTime;
 	private long roundEndTime;
 	private boolean firstRound;
+	private int[] suggestedPositions;
 	
 	AccomplishmentsOutbox outbox = new AccomplishmentsOutbox();
 
@@ -107,12 +117,16 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		shuffle.setOnClickListener(this);
 		next = findViewById(R.id.next);
 		next.setOnClickListener(this);
+		suggestion = findViewById(R.id.show_suggestion);
+		suggestion.setOnClickListener(this);
 		login = (TextView) findViewById(R.id.login);
 		login.setOnClickListener(this);
 		showAchievements = findViewById(R.id.show_achievements);
 		showAchievements.setOnClickListener(this);
 		showLeaderboard = findViewById(R.id.show_leaderboard);
 		showLeaderboard.setOnClickListener(this);
+		showPrefs = findViewById(R.id.show_prefs);
+		showPrefs.setOnClickListener(this);
 		rateApp = findViewById(R.id.rate);
 		rateApp.setOnClickListener(this);
 		controlls = findViewById(R.id.controlls);
@@ -120,12 +134,46 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		firstRound = (savedInstanceState == null);
 		progressBar = findViewById(R.id.progressBar);
 		topLayer = findViewById(R.id.top_layer);
+		AdBuddiz.setPublisherKey("3d27d75e-81ba-4480-aa99-04e734e35dda");
+	    AdBuddiz.cacheAds(this);
+	    AdBuddiz.setDelegate(delegate);
+	    if (PrefUtils.showPatchNotes(this)){
+	    	PrefUtils.setShowPatchNotes(false, this);
+	    	showPatchNotes();
+	    	
+	    }
+	    if (PrefUtils.showTutorial(this)){
+	    	PrefUtils.setShowTutorial(false, this);
+	    	showTutorial();
+	    }
 		newWord();			
+	}
+
+	private void showTutorial() {
+		LayoutInflater li = LayoutInflater.from(this);
+		View view = li.inflate(R.layout.tutorial_dialog, null);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder	.setView(view)
+				.setPositiveButton("OK", null);
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	private void showPatchNotes() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.patch_title)
+				.setMessage(R.string.patch_message)
+				.setCancelable(false)
+				.setPositiveButton("OK", null);
+		AlertDialog alert = builder.create();
+		alert.show();
+		
 	}
 
 	private void newWord() {
 		setControlsEnabled(false);
 		currentPosition = 0;
+		suggestedPositions = null;
 		fadeOut();			
 	}
 
@@ -141,6 +189,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 			controlls.setVisibility(View.GONE);
 			progressBar.setVisibility(View.VISIBLE);
 		} else {
+			progressBar.setVisibility(View.GONE);
 			Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 			fadeOut.setFillAfter(true);
 			fadeOut.setAnimationListener(new SimpleAnimationListener(){
@@ -184,7 +233,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		return b;
 	}
 
-	private void clearButtons() {
+	private void removeButtons() {
 		userWordHolder.removeAllViews();
 		randomedWordHolder.removeAllViews();
 	}
@@ -193,9 +242,22 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		Button userButton = (Button) userWordHolder.getChildAt(currentPosition);
 		userButton.setText(Character.toString(c));
 		currentPosition++;
+		for (int i = currentPosition; i < sourceWord.word.length(); i++){
+			Button button = (Button) userWordHolder.getChildAt(i);
+			if (button.getText().toString().length() > 0){
+				currentPosition = i+1;
+			} else {
+				break;
+			}
+		}
 		if (currentPosition == sourceWord.word.length()){
 			checkWin();
 		}
+	}
+	
+	private void addCharAtPosition(char c, int position) {
+		Button userButton = (Button) userWordHolder.getChildAt(position);
+		userButton.setText(Character.toString(c));
 	}
 	
 	private void checkWin() {
@@ -249,16 +311,27 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	}
 	
 	private void clearUserButtons(int startPos) {
-		if (startPos > currentPosition){
-			return;
-		}
-		for (int i = startPos; i < currentPosition; i++){
+		for (int i = startPos; i < sourceWord.word.length(); i++){
 			Button userButton = (Button) userWordHolder.getChildAt(i);
-			enableRandomedButton(userButton.getText().toString().charAt(0));
-			userButton.setText("");
+			String text = userButton.getText().toString();
+			if (text.length() > 0){
+				enableRandomedButton(userButton.getText().toString().charAt(0));				
+				userButton.setText("");
+			}
 			userButton.setBackgroundResource(R.drawable.game_button);
 		}
 		currentPosition = startPos;
+	}	
+	
+	private void clearButtonsForced() {
+		for (int i = 0; i < sourceWord.word.length(); i++){
+			Button button = (Button) userWordHolder.getChildAt(i);
+			button.setText("");
+			button.setBackgroundResource(R.drawable.game_button);
+			button = (Button) randomedWordHolder.getChildAt(i);
+			button.setEnabled(true);
+		}
+		currentPosition = 0;
 	}	
 	
 	class RandomButtonClick implements View.OnClickListener{
@@ -296,7 +369,7 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 			if (word != null){
 				sourceWord = word;
 				hint.setText(sourceWord.hint);
-				clearButtons();
+				removeButtons();
 				populateButtons();
 				fadeIn();
 				roundStartTime = System.currentTimeMillis();
@@ -309,14 +382,32 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 	private UpdateWordTask.UpdateWordCallback updateWordCallback = new UpdateWordCallback() {
 
 		@Override
-		public void onWordUpdated(int guessedWordsCount, int totalWordsCount) {
-			outbox.score = guessedWordsCount;
-			checkForAchievements(guessedWordsCount, totalWordsCount);
+		public void onWordUpdated(WordsCountStruct wordsCountStruct) {
+			int total = wordsCountStruct.total + wordsCountStruct.totalEng;
+			int guessed = wordsCountStruct.guesssed + wordsCountStruct.guesssedEng;
+			outbox.score = guessed;
+			checkForAchievements(guessed, total);
 	        pushAccomplishments();
-	        if (guessedWordsCount == totalWordsCount){
-	        	uiHandler.sendEmptyMessageDelayed(END, DELAY);	
+	        boolean rusWordsEnabled = PrefUtils.isRusWordsEnabled(GameActivity.this);
+	        boolean engWordsEnabled = PrefUtils.isEngWordsEnabled(GameActivity.this);
+	        if (rusWordsEnabled && engWordsEnabled){
+	        	if (total == guessed){
+	        		uiHandler.sendEmptyMessageDelayed(END, DELAY);
+	        	} else {
+	        		uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);	
+	        	}
+	        } else if (engWordsEnabled){
+	        	if (wordsCountStruct.guesssedEng == wordsCountStruct.totalEng){
+	        		uiHandler.sendEmptyMessageDelayed(END, DELAY);	
+	        	} else {
+	        		uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);	
+	        	}
 	        } else {
-	        	uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);	        	
+	        	if (wordsCountStruct.guesssed == wordsCountStruct.total){
+	        		uiHandler.sendEmptyMessageDelayed(END, DELAY);	
+	        	} else {
+	        		uiHandler.sendEmptyMessageDelayed(SUCCESS, DELAY);	
+	        	}
 	        }
 		}
 	};
@@ -459,9 +550,54 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		case R.id.rate:
 			askForRate();
 			break;
+		case R.id.show_prefs:
+			startActivity(new Intent(this, SettingsActivity.class));
+			break;
+		case R.id.show_suggestion:
+			if (AdBuddiz.isReadyToShowAd(this) && PrefUtils.showAd(this) && suggestedPositions == null){
+				AdBuddiz.showAd(this);				
+			} else {
+				showSuggestion();				
+			}
+			break;
 		}
 	}
 	
+	private void showSuggestion() {
+		clearButtonsForced();
+		int count = sourceWord.word.length()/2;
+		int len = sourceWord.word.length();
+		
+		if (suggestedPositions == null){
+			Random random = new Random();
+			suggestedPositions = new int[count];
+			for (int i = 0; i < suggestedPositions.length; i++){
+				suggestedPositions[i] = random.nextInt(len);
+			}
+		}
+		
+		for (int i = 0; i < count; i++){	
+			char c = sourceWord.word.charAt(suggestedPositions[i]);
+			addCharAtPosition(c, suggestedPositions[i]);
+			for (int j = 0; j < len; j++){
+				Button button = (Button) randomedWordHolder.getChildAt(j);
+				if (button.getText().toString().charAt(0) == c && button.isEnabled()){
+					button.setEnabled(false);
+					break;
+				}
+			}
+		}
+		for (int i = 0; i < len; i++){
+			Button button = (Button) userWordHolder.getChildAt(i);
+			if (button.getText().length() == 0){
+				break;
+			} else {
+				currentPosition = i+1;
+			}
+		}
+		
+	}
+
 	private void askForRate() {
 		AlertDialog.Builder b = new AlertDialog.Builder(this);
 		b.setMessage(R.string.ask_rate);
@@ -568,6 +704,29 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		randomedWordHolder.startAnimation(shake);
 	}
 	
+	private AdBuddizDelegate delegate = new AdBuddizDelegate() {
+		
+		@Override
+		public void didShowAd() {	
+		}
+		
+		@Override
+		public void didHideAd() {
+			showSuggestion();
+		}
+		
+		@Override
+		public void didFailToShowAd(AdBuddizError arg0) {
+			showSuggestion();
+		}
+		
+		@Override
+		public void didClick() {}
+		
+		@Override
+		public void didCacheAd() {}
+	};
+	
 	private SimpleDrawerListener drawerListener = new SimpleDrawerListener() {
 		@Override
 		public void onDrawerOpened(View drawerView) {
@@ -584,9 +743,11 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 
 	@Override
 	public void onStatisticsReceived(Statistics statistics) {
-		totalWords.setText(getString(R.string.total_words)+" "+statistics.totalWordsCount);
-		guessedWords.setText(getString(R.string.guessed_words)+" "+statistics.guessedWordsCount);
-		viewedWords.setText(getString(R.string.viewed_words)+" "+statistics.viewedWordsCount);
+		String rus = getString(R.string.rus);
+		String eng = getString(R.string.eng);
+		totalWords.setText(getString(R.string.total_words)+" "+statistics.totalWordsCount+" "+rus+"; "+statistics.totalEngWordsCount+" "+eng);
+		guessedWords.setText(getString(R.string.guessed_words)+" "+statistics.guessedWordsCount+" "+rus+"; "+statistics.guessedEngWordsCount+" "+eng);
+		viewedWords.setText(getString(R.string.viewed_words)+" "+statistics.viewedWordsCount+" "+rus+"; "+statistics.viewedEngWordsCount+" "+eng);
 		menuProgress.setVisibility(View.GONE);
 		menuContent.setVisibility(View.VISIBLE);
 	}

@@ -1,5 +1,5 @@
 <resources>
-    <dimen name="drawer_width">300dp</dimen>
+    <dimen name="drawer_width">500dp</dimen>
     <dimen name="button_text_size">40sp</dimen>
 	<dimen name="menu_text_size">18sp</dimen>
 	<dimen name="controls_text_size">26sp</dimen>

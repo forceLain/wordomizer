@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Викторина Анаграмма</string>
+    <string name="title_activity_settings">Настройки</string>
     <string name="start">Старт</string>
     <string name="menu">Статистика</string>
     <string name="login">Вход с Google</string>
     <string name="total_words">Слов в базе:</string>
+    <string name="rus">рус</string>
+    <string name="eng">eng</string>
     <string name="guessed_words">Отгадано:</string>
     <string name="viewed_words">Просмотрено:</string>
     <string name="show_achievements">Достижения</string>
     <string name="show_leaderboard">Список лидеров</string>
+    <string name="prefs">Настройки</string>
     <string name="achievements_not_available">Пожалуйста, зарегистрируйтесь, что бы видеть достижения</string>
     <string name="leaderboards_not_available">Пожалуйста, зарегистрируйтесь, что бы видеть список лидеров</string>
     <string name="ask_logout">Выйти из текущего аккаунта?</string>
@@ -19,5 +23,17 @@
         К сожалению, у нас кончились слова, что бы загадать Вам</string>
     <string name="cd_shuffle">Перемешать</string>
     <string name="cd_next">Пропустить</string>
+    <string name="cd_suggestion">Подсказка</string>
+    <string name="cd_settings">Настройки</string>
     <string name="rate_text">5+</string>
+    <string name="settings_rus_words">Загадывать русские слова</string>
+    <string name="settings_eng_words">Загадывать английские слова</string>
+    <string name="settings_ad_title">Реклама</string>
+    <string name="settings_ad_summary">Реклама в приложениях способствует их развитию, а так же созданию новых, более крутых приложений. Тем не менее, Вы можете её отключить.</string>
+    <string name="patch_title">Что нового</string>
+    <string name="patch_message">В новой версии Вы сможете испытать свой словарный запас английских слов. Подсказкой для английской анаграммы является её перевод. Вы можете отключить английские слова в настройках.</string>
+    <string name="help_shuffle">Перемешать буквы</string>
+    <string name="help_next">Следующее слово</string>
+    <string name="help_settings">Настройки</string>
+    <string name="help_suggestion">Подсказка</string>
 </resources>
