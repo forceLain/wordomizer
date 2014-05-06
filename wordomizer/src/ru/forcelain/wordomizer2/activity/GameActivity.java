@@ -1,5 +1,6 @@
 package ru.forcelain.wordomizer2.activity;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,7 @@ import ru.forcelain.wordomizer2.tasks.GetStatisticsTask.StatisticsCallBack;
 import ru.forcelain.wordomizer2.tasks.UpdateWordTask;
 import ru.forcelain.wordomizer2.tasks.UpdateWordTask.UpdateWordCallback;
 import ru.forcelain.wordomizer2.utils.PrefUtils;
+import ru.forcelain.wordomizer2.utils.Utils;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -571,8 +573,13 @@ public class GameActivity extends BaseGameActivity implements OnClickListener, S
 		if (suggestedPositions == null){
 			Random random = new Random();
 			suggestedPositions = new int[count];
+			Arrays.fill(suggestedPositions, -1);
 			for (int i = 0; i < suggestedPositions.length; i++){
-				suggestedPositions[i] = random.nextInt(len);
+				int r;
+				do {
+					r = random.nextInt(len);
+				} while (Utils.contains(suggestedPositions, r));
+				suggestedPositions[i] = r;
 			}
 		}
 		
